@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Select Xcode
+      run: sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer
+    
+    - name: Show Xcode version
+      run: xcodebuild -version
+    
+    - name: Show available schemes
+      run: xcodebuild -list -json
+    
+    - name: Cache Swift packages
+      uses: actions/cache@v3
+      with:
+        path: .build
+        key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-spm-
+    
+    - name: Lint with SwiftLint
+      run: |
+        if which swiftlint >/dev/null; then
+          swiftlint
+        else
+          echo "SwiftLint not installed, skipping..."
+        fi
+    
+    - name: Build
+      run: swift build -v
+    
+    - name: Run tests
+      run: xcodebuild test -scheme IntitledApp -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+    
+    - name: Archive for TestFlight (main branch only)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        xcodebuild -scheme IntitledApp \
+          -destination 'generic/platform=iOS' \
+          -archivePath IntitledApp.xcarchive \
+          archive
+    
+    - name: Export IPA (main branch only)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        xcodebuild -exportArchive \
+          -archivePath IntitledApp.xcarchive \
+          -exportPath . \
+          -exportOptionsPlist ExportOptions.plist 
