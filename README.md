@@ -212,6 +212,25 @@ The app currently shows:
 - **Badge System**: Popup animations for earned achievements
 - **Data Models**: Complete SwiftData persistence layer ready for UI implementation
 
+### ⚠️ **CRITICAL REQUIREMENTS NEEDED**
+
+#### 🍎 **Apple Developer Program** - **REQUIRED** 
+**Status**: ❌ **NOT ENROLLED** | **Cost**: $99/year
+
+**Essential for**:
+- Testing on physical devices (currently Simulator only)
+- App Store distribution and TestFlight beta testing  
+- Push notifications and CloudKit production environment
+- Proper code signing and entitlements
+
+👉 **[Enroll at developer.apple.com](https://developer.apple.com/programs/)** before device testing
+
+#### 🔥 **Firebase Configuration** 
+**Status**: ⚠️ **PARTIALLY COMPLETE**
+- ✅ Firebase project created (`intilted-v1`)
+- ❌ Missing `GoogleService-Info.plist` (download from Firebase Console)
+- ❌ iOS App target needed in Xcode
+
 ### 🎨 **Design System Ready**
 - **Dark-mode-first** color palette implemented
 - **Typography scale** with comprehensive font definitions
@@ -219,12 +238,18 @@ The app currently shows:
 - **Animation presets** and haptic feedback
 - **Custom shapes** for book spines and shelves
 
-### 📱 **Next: UI Implementation**
-Ready to implement the beautiful views matching your mockups:
-1. Replace placeholder views with actual shelf visualizations
-2. Add VisionKit scanner integration
-3. Implement book detail and review interfaces
-4. Create the discover feed and social features
+### 📱 **Next: Setup & UI Implementation**
+**Immediate Steps**:
+1. **🍎 Enroll in Apple Developer Program** ($99/year)
+2. **📱 Create iOS App target** in Xcode with proper bundle ID
+3. **🔥 Add GoogleService-Info.plist** from Firebase Console
+
+**Then UI Development**:
+4. Replace placeholder views with actual shelf visualizations
+5. Add VisionKit scanner integration
+6. Implement book detail and review interfaces
+
+📋 **See [DEVELOPMENT-STATUS.md](DEVELOPMENT-STATUS.md) for detailed progress tracking**
 
 ## Roadmap
 
