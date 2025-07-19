@@ -1,228 +1,268 @@
 # Intitled
 
-A modern iOS app for managing your personal library with seamless scanning, social discovery, and beautiful shelf customization.
+**Your personal library, everywhere.**
+
+Intitled is a beautiful iOS app that lets you instantly capture, catalog, and organize your real-world book collection. Scan book covers or ISBNs to add them to your digital shelf, track what you own or want to read, and connect with friends to share reviews and reading journeys.
 
 ## Features
 
-- 📚 **Smart Library Management** - Organize books into custom shelves
-- 📱 **ISBN Scanning** - Instant book recognition via camera
-- 🌟 **Social Discovery** - Connect with friends and discover trending reads
-- 🎨 **Custom Shelf Themes** - Personalize your library appearance
-- 🏆 **Achievement Badges** - Unlock rewards for reading milestones
-- ☁️ **CloudKit Sync** - Access your library across all devices
+### 📚 Book Management
+- **Instant Scanning**: Barcode/ISBN scanner with live camera integration
+- **Cover OCR**: Recognizes book title & author from cover images
+- **Smart Metadata**: Fetches comprehensive book details from Google Books & Open Library APIs
+- **Manual Entry**: Add books by hand or correct scanned metadata
+- **Duplicate Detection**: Alerts when books are already in your library
+
+### 🏛️ Virtual Library
+- **Beautiful Shelf Views**: Customizable shelf styles (wood, modern, vintage, etc.)
+- **Drag & Drop**: Reorder books and move between shelves
+- **Custom Organization**: Create personalized shelves and sections
+- **Smart Filtering**: Sort by title, author, reading status, rating, genre
+- **Fast Search**: Fuzzy search across your entire collection
+
+### 📖 Reading Tracking
+- **Reading Status**: Track "Read," "Currently Reading," "Want to Read"
+- **Progress Tracking**: Monitor pages read and completion percentage
+- **Personal Notes**: Attach private annotations and thoughts
+- **Reading History**: View reading dates and completion timeline
+
+### 🏆 Achievements & Badges
+- **Gamified Experience**: Earn badges for reading milestones
+- **Tiered Progression**: Bronze, Silver, Gold, Platinum, Diamond badges
+- **Multiple Categories**: Reading, Collection, Social, Discovery achievements
+- **Progress Tracking**: See progress toward next badge tier
+
+### 👥 Social Features
+- **User Profiles**: Customizable profiles with reading stats
+- **Friend Network**: Connect with fellow readers
+- **Review System**: Write and share book reviews
+- **Activity Feed**: See friends' recent reading activity
+- **Privacy Controls**: Granular control over what's shared
 
 ## Architecture
 
+Intitled follows **MVVM-C (Model-View-ViewModel-Coordinator)** architecture with dependency injection:
+
+### Core Components
+
+- **SwiftUI**: Modern, declarative UI framework
+- **SwiftData + CloudKit**: Local persistence with cloud sync
+- **Firebase Auth & Firestore**: Authentication and social features
+- **VisionKit + AVFoundation**: Camera-based book scanning
+- **Combine**: Reactive data flow
+
+### Project Structure
+
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      IntitledApp                             │
-│  ┌─────────────────┐  Main app entry & navigation           │
-│  │   RootTabView   │  ← 5-tab interface (Library, Scanner,  │
-│  │   AppModel      │    Discover, Profile, Shop)            │
-│  └─────────────────┘                                        │
-├─────────────────────────────────────────────────────────────┤
-│                   Feature Modules                           │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐           │
-│  │   Library   │ │   Scanner   │ │  Discover   │           │
-│  │   Feature   │ │   Feature   │ │   Feature   │           │
-│  └─────────────┘ └─────────────┘ └─────────────┘           │
-│  ┌─────────────┐ ┌─────────────┐                           │
-│  │   Profile   │ │    Shop     │                           │
-│  │   Feature   │ │   Feature   │                           │
-│  └─────────────┘ └─────────────┘                           │
-├─────────────────────────────────────────────────────────────┤
-│                   Services Layer                            │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐           │
-│  │    Books    │ │    Image    │ │    Shelf    │           │
-│  │ API Gateway │ │   Loader    │ │ Style Store │           │
-│  └─────────────┘ └─────────────┘ └─────────────┘           │
-├─────────────────────────────────────────────────────────────┤
-│                    Data Layer                               │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐           │
-│  │   Models    │ │ Core Data + │ │   Book      │           │
-│  │  (MVVM-C)   │ │  CloudKit   │ │ Repository  │           │
-│  └─────────────┘ └─────────────┘ └─────────────┘           │
-├─────────────────────────────────────────────────────────────┤
-│                    Resources                                │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐           │
-│  │   Assets    │ │    Color    │ │    Shelf    │           │
-│  │ & Images    │ │   Tokens    │ │   Themes    │           │
-│  └─────────────┘ └─────────────┘ └─────────────┘           │
-└─────────────────────────────────────────────────────────────┘
+Sources/
+├── IntitledApp/          # Main app entry point and coordination
+├── DataLayer/           # Core Data models and persistence
+├── ServicesLayer/       # API services and business logic
+├── LibraryFeature/      # Library and shelf management
+├── ScannerFeature/      # Book scanning functionality
+├── ProfileFeature/      # User profiles and social features
+├── DiscoverFeature/     # Book discovery and recommendations
+├── ShopFeature/         # Book purchasing integration
+└── Resources/           # Design system and shared resources
 ```
 
-## Requirements
+### Design Principles
 
-- **macOS:** 12.0+ (for development)
-- **iOS:** 16.0+ (target deployment)
-- **Xcode:** 15.0+ (required for iOS development)
-- **Swift:** 5.9+
+- **Dark Mode First**: Beautiful dark theme with warm accent colors
+- **Accessibility**: Full VoiceOver support and Dynamic Type
+- **Performance**: Optimized for smooth scrolling and quick interactions
+- **Offline Support**: Core functionality works without internet
 
-## Setup & Installation
+## Getting Started
 
-### Option 1: Native iOS Development (Recommended)
+### Prerequisites
 
-1. **Install Xcode** from the Mac App Store (required for iOS development)
+- Xcode 15.0 or later
+- iOS 17.0 or later
+- Swift 5.9 or later
 
-2. **Clone and Setup:**
+### Setup Instructions
+
+1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/Intitled.git
-   cd Intitled
-   
-   # Open in Xcode (this will generate the Xcode project)
-   open Package.swift
+   git clone https://github.com/GabeGiancarlo/intitled.git
+   cd intitled
    ```
 
-3. **Configure Signing:**
-   - Select your development team in Xcode
-   - Update the bundle identifier if needed
+2. **Install dependencies**
+   ```bash
+   # Dependencies are managed via Swift Package Manager
+   # Xcode will automatically resolve packages when you open the project
+   ```
 
-4. **Run the Project:**
-   - Select an iOS simulator or device
-   - Press ⌘+R to build and run
+3. **Configure Firebase**
+   - Firebase project: `intilted-v1` is already configured
+   - **📋 Detailed Setup Guide**: See [docs/Firebase-Setup.md](docs/Firebase-Setup.md) for comprehensive configuration
+   - Firebase Console: [https://console.firebase.google.com/u/0/project/intilted-v1](https://console.firebase.google.com/u/0/project/intilted-v1/authentication/users)
+   - Add iOS app with bundle identifier `com.intitled.intilted-v1`
+   - Download `GoogleService-Info.plist` and add to project root
+   - Authentication methods enabled:
+     - ✅ Email/Password authentication
+     - ✅ Phone authentication ([Firebase iOS Phone Auth](https://firebase.google.com/docs/auth/ios/phone-auth))
+   - ✅ Firestore Database configured for social features
+   - ✅ Security rules implemented
+   - ✅ Email customization ready ([Firebase Auth Email Customization](https://support.google.com/firebase/answer/7000714))
 
-### Option 2: Swift Package Manager (Library Development)
+4. **Configure CloudKit**
+   - CloudKit container: `iCloud.com.intitled.intilted-v1` (pre-configured)
+   - Enable CloudKit in your Apple Developer account
+   - CloudKit database setup matches Firebase project naming
 
-```bash
-# For library/framework development
-swift build
+5. **Assets Setup** (Required for UI completion)
+   ```
+   Create an Assets.xcassets folder with:
+   
+   📁 Assets.xcassets/
+   ├── 📁 AppIcon.appiconset/         # App icon variants
+   ├── 📁 AccentColor.colorset/       # Gold accent color (#D4AF37)
+   ├── 📁 ShelfTextures/              # Shelf background textures
+   │   ├── classic-wood.imageset/     # Classic wood texture
+   │   ├── modern-dark.imageset/      # Dark modern texture
+   │   ├── vintage.imageset/          # Vintage wood texture
+   │   └── white-minimal.imageset/    # Clean white texture
+   ├── 📁 BookCovers/                 # Sample book cover images
+   │   ├── placeholder-book.imageset/ # Default book cover
+   │   └── sample-covers.imageset/    # Sample covers for demo
+   └── 📁 BadgeIcons/                 # Custom badge graphics
+       ├── bronze-badge.imageset/     # Bronze tier badge
+       ├── silver-badge.imageset/     # Silver tier badge
+       ├── gold-badge.imageset/       # Gold tier badge
+       ├── platinum-badge.imageset/   # Platinum tier badge
+       └── diamond-badge.imageset/    # Diamond tier badge
+   ```
 
-# Run tests
-swift test
+6. **Build and run**
+   ```bash
+   # Open in Xcode
+   open Package.swift
+   
+   # Or build from command line
+   swift build
+   ```
 
-# Generate Xcode project for SPM
-swift package generate-xcodeproj
-```
+## Development
 
-**Note:** Full iOS app development requires Xcode. SPM alone is insufficient for iOS apps with camera permissions, CloudKit integration, and StoreKit features.
+### Code Style
 
-## Project Structure
+- **Swift**: Idiomatic Swift with modern async/await patterns
+- **Architecture**: MVVM-C with coordinator-driven navigation
+- **Testing**: Comprehensive unit and integration tests (target: ≥50% coverage)
+- **Linting**: SwiftLint configuration for consistent code style
 
-```
-Intitled/
-├── Package.swift                 # Swift Package Manager manifest
-├── Sources/
-│   ├── IntitledApp/             # Main app entry point
-│   │   ├── IntitledApp.swift    # @main app struct
-│   │   ├── AppModel.swift       # App-wide state management
-│   │   └── RootTabView.swift    # 5-tab navigation
-│   ├── LibraryFeature/          # Library management module
-│   │   ├── LibraryView.swift    # Main library interface
-│   │   ├── ShelfDetailView.swift# Individual shelf display
-│   │   └── BookSpineView.swift  # Book component
-│   ├── ScannerFeature/          # ISBN scanning module
-│   │   ├── ScannerView.swift    # Camera scanner interface
-│   │   └── ScanResultSheet.swift# Scan result presentation
-│   ├── DiscoverFeature/         # Social discovery module
-│   │   └── DiscoverView.swift   # Friends/Trending/Search
-│   ├── ProfileFeature/          # User profile module
-│   │   └── ProfileView.swift    # Profile & badges
-│   ├── ShopFeature/             # In-app purchases module
-│   │   └── ShopView.swift       # Shelf theme store
-│   ├── DataLayer/               # Core Data & models
-│   │   ├── Models/              # Domain models
-│   │   ├── PersistenceController.swift # Core Data + CloudKit
-│   │   └── BookRepository.swift # Data access layer
-│   ├── ServicesLayer/           # External services
-│   │   ├── BooksAPIGateway.swift# Open Library + Google Books
-│   │   ├── ImageLoader.swift    # Async image caching
-│   │   └── ShelfStyleStore.swift# StoreKit 2 integration
-│   └── Resources/               # Assets & resources
-│       ├── Assets/              # Images, colors, themes
-│       └── ResourceManager.swift# Asset management
-├── Tests/
-│   └── IntitledTests/           # Unit & integration tests
-└── .github/workflows/           # CI/CD pipeline
-```
+### Key Technologies
+
+- **SwiftData**: Modern data persistence with CloudKit sync
+- **VisionKit**: Advanced computer vision for book scanning
+- **Combine**: Reactive programming for UI updates
+- **Firebase**: Authentication and real-time social features
+- **Swift Package Manager**: Dependency management
+
+### Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## API Integration
 
-### Books Metadata
-- **Primary:** [Open Library API](https://openlibrary.org/developers/api)
-- **Fallback:** [Google Books API](https://developers.google.com/books/docs/v1/using)
+### Book Metadata Sources
 
-### Cloud Services
-- **Sync:** CloudKit (Apple's native cloud database)
-- **Auth:** FirebaseAuth (for social features, future)
+1. **Google Books API** (Primary)
+   - Comprehensive book database
+   - High-quality cover images
+   - Rich metadata including descriptions
 
-## Development Roadmap
+2. **Open Library API** (Fallback)
+   - Open source book database
+   - Additional coverage for obscure titles
 
-| Sprint | Focus Area | Features | Status |
-|--------|------------|----------|--------|
-| **0** | **Project Bootstrap** | Project setup, basic structure, CI/CD | ✅ **Complete** |
-| **1** | **Core Scanning & Library** | ISBN scanning, book metadata, basic shelves | 🔄 **Next** |
-| **2** | **Social Features** | Friend connections, reading discovery | 📋 **Planned** |
-| **3** | **Shop & Customization** | Shelf themes, in-app purchases, badges | 📋 **Planned** |
-| **4** | **Polish & Performance** | Animations, optimization, accessibility | 📋 **Planned** |
-| **5** | **Launch Preparation** | App Store assets, marketing, final testing | 📋 **Planned** |
+### Data Flow
 
-## Testing Strategy
-
-```bash
-# Run all tests
-swift test
-
-# Run with coverage
-swift test --enable-code-coverage
-
-# iOS-specific testing (requires Xcode)
-xcodebuild test -scheme IntitledApp -destination 'platform=iOS Simulator,name=iPhone 15'
+```mermaid
+graph TD
+    A[Scan Book] --> B[Extract ISBN/Title]
+    B --> C[Check Local Cache]
+    C --> D{Found Locally?}
+    D -->|Yes| E[Return Cached Data]
+    D -->|No| F[Query Google Books API]
+    F --> G{Found on Google Books?}
+    G -->|Yes| H[Cache & Return Data]
+    G -->|No| I[Query Open Library API]
+    I --> J[Cache & Return Data]
+    H --> K[Update UI]
+    J --> K
+    E --> K
 ```
 
-### Test Coverage Goals
-- **Unit Tests:** ≥80% coverage for business logic
-- **Integration Tests:** API gateways, data repositories
-- **UI Tests:** Critical user flows (scanning, adding books)
+## Current App State
 
-## Contributing
+### 🏗️ **Foundation Complete** ✅
+The app currently shows:
+- **Loading Screen**: Dark theme with Intitled logo and progress indicator
+- **Authentication Flow**: Placeholder login/signup screens (ready for Firebase integration)
+- **Tab Navigation**: 5-tab structure (Home, Discover, Scan, Library, Profile)
+- **Placeholder Views**: All major screens with "To be implemented" labels
+- **Badge System**: Popup animations for earned achievements
+- **Data Models**: Complete SwiftData persistence layer ready for UI implementation
 
-### Code Style
-- **SwiftLint:** Enforced via CI pipeline
-- **MVVM-C:** Architecture pattern for features
-- **Async/Await:** Preferred over completion handlers
-- **File Structure:** One public type per file, <300 LOC preferred
+### 🎨 **Design System Ready**
+- **Dark-mode-first** color palette implemented
+- **Typography scale** with comprehensive font definitions
+- **Button styles** and component library
+- **Animation presets** and haptic feedback
+- **Custom shapes** for book spines and shelves
 
-### Development Workflow
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Follow** the coding style and run tests
-4. **Commit** with conventional commit messages
-5. **Push** and create a Pull Request
+### 📱 **Next: UI Implementation**
+Ready to implement the beautiful views matching your mockups:
+1. Replace placeholder views with actual shelf visualizations
+2. Add VisionKit scanner integration
+3. Implement book detail and review interfaces
+4. Create the discover feed and social features
 
-### Commit Convention
-```
-feat(scope): add amazing new feature
-fix(scanner): resolve camera permission issue
-docs(readme): update installation instructions
-test(library): add shelf creation tests
-chore(ci): update GitHub Actions workflow
-```
+## Roadmap
 
-## Troubleshooting
+### Phase 1: Foundation ✅
+- [x] Core architecture and data models
+- [x] Authentication infrastructure  
+- [x] Design system and theming
+- [x] Badge and achievement system
+- [x] Local persistence with CloudKit sync
 
-### Common Issues
+### Phase 2: Social Features
+- [ ] Friend connections
+- [ ] Review system
+- [ ] Activity feeds
+- [ ] Badge system
 
-**"xcodebuild: command not found"**
-- Install Xcode from the Mac App Store
-- Run `sudo xcode-select --install` for command line tools
+### Phase 3: Advanced Features
+- [ ] Book recommendations
+- [ ] Reading challenges
+- [ ] Export/import functionality
+- [ ] Advanced analytics
 
-**"Package.swift compilation failed"**
-- Ensure you have Swift 5.9+ installed
-- Open Package.swift in Xcode instead of command line
-
-**"iOS Simulator not found"**
-- Open Xcode and download iOS simulators
-- Devices & Simulators → iOS → Download runtime
-
-### Performance Tips
-- **Image Caching:** Automatic via `ImageLoader`
-- **Core Data:** Batch operations for large imports
-- **Memory:** Use `LazyVStack` for large book collections
+### Phase 4: Expansion
+- [ ] macOS app
+- [ ] Web companion
+- [ ] Third-party integrations
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Acknowledgments
+
+- Beautiful UI design inspired by modern reading apps
+- Firebase for robust backend infrastructure
+- Apple's SwiftUI and SwiftData frameworks
+- Open source book APIs for metadata
+
 ---
 
-**Built with ❤️ using SwiftUI, Core Data + CloudKit, and the power of books 📚** 
+**Intitled** - Your books, beautifully organized. 📚✨ 

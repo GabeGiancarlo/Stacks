@@ -1,66 +1,38 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.9
 import PackageDescription
 
 let package = Package(
     name: "Intitled",
-    platforms: [.iOS(.v16)],
-    products: [
-        .library(name: "Intitled", targets: ["IntitledApp"])
+    platforms: [
+        .iOS(.v17)
     ],
-    dependencies: [],
+    products: [
+        .library(
+            name: "Intitled",
+            targets: ["Intitled"]
+        ),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "10.18.0"),
+        .package(url: "https://github.com/nalexn/ViewInspector", from: "0.9.7"),
+    ],
     targets: [
-        // App target
         .target(
-            name: "IntitledApp",
+            name: "Intitled",
             dependencies: [
-                "LibraryFeature",
-                "ScannerFeature", 
-                "DiscoverFeature",
-                "ProfileFeature",
-                "ShopFeature",
-                "DataLayer",
-                "ServicesLayer",
-                "Resources"
-            ]
+                .product(name: "FirebaseAuth", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseFirestore", package: "firebase-ios-sdk"),
+                .product(name: "FirebaseStorage", package: "firebase-ios-sdk"),
+            ],
+            path: "Sources"
         ),
-        
-        // Feature modules
-        .target(
-            name: "LibraryFeature",
-            dependencies: ["DataLayer", "Resources"]
-        ),
-        .target(
-            name: "ScannerFeature",
-            dependencies: ["ServicesLayer", "DataLayer"]
-        ),
-        .target(
-            name: "DiscoverFeature",
-            dependencies: ["DataLayer"]
-        ),
-        .target(
-            name: "ProfileFeature",
-            dependencies: ["DataLayer", "Resources"]
-        ),
-        .target(
-            name: "ShopFeature",
-            dependencies: ["ServicesLayer"]
-        ),
-        
-        // System layers
-        .target(name: "DataLayer"),
-        .target(
-            name: "ServicesLayer",
-            dependencies: ["Resources"]
-        ),
-        .target(
-            name: "Resources",
-            resources: [.process("Assets")]
-        ),
-        
-        // Tests
         .testTarget(
             name: "IntitledTests",
-            dependencies: ["IntitledApp"]
-        )
+            dependencies: [
+                "Intitled",
+                .product(name: "ViewInspector", package: "ViewInspector"),
+            ],
+            path: "Tests"
+        ),
     ]
 ) 
