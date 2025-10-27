@@ -49,84 +49,68 @@ Here's a preview of what Stacks will look like when complete. These mockups show
 
 <table>
 <tr>
-<td width="50%">
+<td width="20%">
 
 ![Homepage](UI-mockups/Homepage.png)
 *Clean, modern homepage with your reading progress and recent activity*
 
 </td>
-<td width="50%">
+<td width="20%">
 
 ![Homepage-1](UI-mockups/Homepage-1.png)
 *Beautiful virtual bookshelf with customizable organization*
 
 </td>
-</tr>
-<tr>
-<td width="50%">
+<td width="20%">
 
 ![Homepage-2](UI-mockups/Homepage-2.png)
 *Alternative shelf view with reading status indicators*
 
 </td>
-<td width="50%">
+<td width="20%">
 
 ![Explore](UI-mockups/Explore.png)
 *Discover new books and recommendations*
 
 </td>
-</tr>
-</table>
-
-### 📖 Book Details & Reviews
-
-<table>
-<tr>
-<td width="50%">
+<td width="20%">
 
 ![Movie Page](UI-mockups/Movie%20Page.png)
 *Detailed book information with reviews and ratings*
 
 </td>
-<td width="50%">
+</tr>
+</table>
+
+### 📖 Reviews & User Experience
+
+<table>
+<tr>
+<td width="20%">
 
 ![Review Page](UI-mockups/Review%20Page.png)
 *Write and read detailed book reviews*
 
 </td>
-</tr>
-</table>
-
-### 📱 Scanning & Onboarding
-
-<table>
-<tr>
-<td width="50%">
+<td width="20%">
 
 ![Scan](UI-mockups/Scan.png)
 *Quick book scanning with camera integration*
 
 </td>
-<td width="50%">
+<td width="20%">
 
 ![On Boarding](UI-mockups/On%20Boarding.png)
 *Welcome experience for new users*
 
 </td>
-</tr>
-</table>
-
-### 👤 User Experience
-
-<table>
-<tr>
-<td width="50%">
+<td width="20%">
 
 ![Login](UI-mockups/Login.png)
 *Simple authentication flow*
 
 </td>
-<td width="50%">
+<td width="20%">
 
 ![Sign Up](UI-mockups/Sign%20Up.png)
 *Easy account creation*
@@ -134,16 +118,25 @@ Here's a preview of what Stacks will look like when complete. These mockups show
 </td>
 </tr>
 <tr>
-<td width="50%">
+<td width="20%">
 
 ![Profile](UI-mockups/Profile.png)
 *Personal profile with reading stats and achievements*
 
 </td>
-<td width="50%">
+<td width="20%">
 
 ![Sidebar](UI-mockups/Sidebar.png)
 *Navigation sidebar with all app features*
+
+</td>
+<td width="20%">
+
+</td>
+<td width="20%">
+
+</td>
+<td width="20%">
 
 </td>
 </tr>
