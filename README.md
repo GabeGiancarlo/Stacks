@@ -1,8 +1,8 @@
-# Intitled
+# Stacks
 
 **Your personal library, everywhere.**
 
-Intitled is a beautiful iOS app that lets you instantly capture, catalog, and organize your real-world book collection. Scan book covers or ISBNs to add them to your digital shelf, track what you own or want to read, and connect with friends to share reviews and reading journeys.
+Stacks is a beautiful iOS app that lets you instantly capture, catalog, and organize your real-world book collection. Scan book covers or ISBNs to add them to your digital shelf, track what you own or want to read, and connect with friends to share reviews and reading journeys.
 
 ## Features
 
@@ -39,31 +39,88 @@ Intitled is a beautiful iOS app that lets you instantly capture, catalog, and or
 - **Activity Feed**: See friends' recent reading activity
 - **Privacy Controls**: Granular control over what's shared
 
+## App Vision & UI Mockups
+
+Here's a preview of what Stacks will look like when complete. These mockups showcase the beautiful, intuitive interface designed for book lovers:
+
+### 🏠 Homepage
+![Homepage](UI-mockups/Homepage.png)
+*Clean, modern homepage with your reading progress and recent activity*
+
+### 📚 Library & Shelves
+![Homepage-1](UI-mockups/Homepage-1.png)
+*Beautiful virtual bookshelf with customizable organization*
+
+![Homepage-2](UI-mockups/Homepage-2.png)
+*Alternative shelf view with reading status indicators*
+
+### 🔍 Discovery & Search
+![Explore](UI-mockups/Explore.png)
+*Discover new books and recommendations*
+
+### 📖 Book Details & Reviews
+![Movie Page](UI-mockups/Movie%20Page.png)
+*Detailed book information with reviews and ratings*
+
+![Review Page](UI-mockups/Review%20Page.png)
+*Write and read detailed book reviews*
+
+### 📱 Scanning & Onboarding
+![Scan](UI-mockups/Scan.png)
+*Quick book scanning with camera integration*
+
+![On Boarding](UI-mockups/On%20Boarding.png)
+*Welcome experience for new users*
+
+### 👤 User Experience
+![Login](UI-mockups/Login.png)
+*Simple authentication flow*
+
+![Sign Up](UI-mockups/Sign%20Up.png)
+*Easy account creation*
+
+![Profile](UI-mockups/Profile.png)
+*Personal profile with reading stats and achievements*
+
+![Sidebar](UI-mockups/Sidebar.png)
+*Navigation sidebar with all app features*
+
 ## Architecture
 
-Intitled follows **MVVM-C (Model-View-ViewModel-Coordinator)** architecture with dependency injection:
+Stacks follows **MVVM-C (Model-View-ViewModel-Coordinator)** architecture with a modern client-server architecture:
 
 ### Core Components
 
+**iOS Client (SwiftUI)**
 - **SwiftUI**: Modern, declarative UI framework
-- **SwiftData + CloudKit**: Local persistence with cloud sync
-- **Firebase Auth & Firestore**: Authentication and social features
+- **Core Data**: Local persistence and caching
 - **VisionKit + AVFoundation**: Camera-based book scanning
-- **Combine**: Reactive data flow
+- **Combine**: Reactive data flow and API communication
+
+**Backend API Server**
+- **MySQL Database**: Robust relational database for book metadata, user data, and social features
+- **RESTful API**: Clean API endpoints for iOS app communication
+- **Authentication**: Secure user authentication and session management
+- **Book Metadata Integration**: Google Books & Open Library API integration
 
 ### Project Structure
 
 ```
-Sources/
-├── IntitledApp/          # Main app entry point and coordination
-├── DataLayer/           # Core Data models and persistence
-├── ServicesLayer/       # API services and business logic
+iOS App (SwiftUI)/
+├── StacksApp/           # Main app entry point and coordination
+├── DataLayer/           # Core Data models and local persistence
+├── ServicesLayer/       # API services and network layer
 ├── LibraryFeature/      # Library and shelf management
 ├── ScannerFeature/      # Book scanning functionality
 ├── ProfileFeature/      # User profiles and social features
 ├── DiscoverFeature/     # Book discovery and recommendations
-├── ShopFeature/         # Book purchasing integration
 └── Resources/           # Design system and shared resources
+
+Backend API/
+├── Database/            # MySQL schema and migrations
+├── API/                 # RESTful endpoints
+├── Services/            # Business logic and external API integration
+└── Authentication/     # User auth and session management
 ```
 
 ### Design Principles
@@ -85,33 +142,40 @@ Sources/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/GabeGiancarlo/intitled.git
-   cd intitled
+   git clone https://github.com/GabeGiancarlo/Stacks.git
+   cd Stacks
    ```
 
-2. **Install dependencies**
+2. **Backend API Setup**
    ```bash
-   # Dependencies are managed via Swift Package Manager
+   # Navigate to backend directory
+   cd backend/
+   
+   # Install dependencies (Node.js/Python/Go depending on implementation)
+   npm install  # or pip install -r requirements.txt
+   
+   # Configure MySQL database
+   # Create database and run migrations
+   mysql -u root -p < database/schema.sql
+   
+   # Set environment variables
+   cp .env.example .env
+   # Edit .env with your database credentials and API keys
+   ```
+
+3. **iOS App Setup**
+   ```bash
+   # Navigate to iOS app directory
+   cd ios/
+   
+   # Install dependencies via Swift Package Manager
    # Xcode will automatically resolve packages when you open the project
    ```
 
-3. **Configure Firebase**
-   - Firebase project: `intilted-v1` is already configured
-   - **📋 Detailed Setup Guide**: See [docs/Firebase-Setup.md](docs/Firebase-Setup.md) for comprehensive configuration
-   - Firebase Console: [https://console.firebase.google.com/u/0/project/intilted-v1](https://console.firebase.google.com/u/0/project/intilted-v1/authentication/users)
-   - Add iOS app with bundle identifier `com.intitled.intilted-v1`
-   - Download `GoogleService-Info.plist` and add to project root
-   - Authentication methods enabled:
-     - ✅ Email/Password authentication
-     - ✅ Phone authentication ([Firebase iOS Phone Auth](https://firebase.google.com/docs/auth/ios/phone-auth))
-   - ✅ Firestore Database configured for social features
-   - ✅ Security rules implemented
-   - ✅ Email customization ready ([Firebase Auth Email Customization](https://support.google.com/firebase/answer/7000714))
-
-4. **Configure CloudKit**
-   - CloudKit container: `iCloud.com.intitled.intilted-v1` (pre-configured)
-   - Enable CloudKit in your Apple Developer account
-   - CloudKit database setup matches Firebase project naming
+4. **Configure API Endpoints**
+   - Update API base URL in iOS app configuration
+   - Ensure backend server is running and accessible
+   - Configure authentication endpoints
 
 5. **Assets Setup** (Required for UI completion)
    ```
@@ -138,11 +202,13 @@ Sources/
 
 6. **Build and run**
    ```bash
-   # Open in Xcode
-   open Package.swift
+   # Start backend server
+   cd backend/
+   npm start  # or python app.py / go run main.go
    
-   # Or build from command line
-   swift build
+   # Build iOS app
+   cd ios/
+   open Stacks.xcodeproj
    ```
 
 ## Development
@@ -156,11 +222,18 @@ Sources/
 
 ### Key Technologies
 
-- **SwiftData**: Modern data persistence with CloudKit sync
+**iOS Client**
+- **SwiftUI**: Modern declarative UI framework
+- **Core Data**: Local persistence and caching
 - **VisionKit**: Advanced computer vision for book scanning
-- **Combine**: Reactive programming for UI updates
-- **Firebase**: Authentication and real-time social features
+- **Combine**: Reactive programming for UI updates and API communication
 - **Swift Package Manager**: Dependency management
+
+**Backend Server**
+- **MySQL**: Robust relational database for data persistence
+- **RESTful API**: Clean HTTP endpoints for client communication
+- **Authentication**: Secure user authentication and session management
+- **External APIs**: Google Books & Open Library integration
 
 ### Contributing
 
@@ -191,26 +264,27 @@ graph TD
     B --> C[Check Local Cache]
     C --> D{Found Locally?}
     D -->|Yes| E[Return Cached Data]
-    D -->|No| F[Query Google Books API]
-    F --> G{Found on Google Books?}
-    G -->|Yes| H[Cache & Return Data]
-    G -->|No| I[Query Open Library API]
-    I --> J[Cache & Return Data]
-    H --> K[Update UI]
-    J --> K
-    E --> K
+    D -->|No| F[Send to Backend API]
+    F --> G[Backend queries Google Books API]
+    G --> H{Found on Google Books?}
+    H -->|Yes| I[Cache in MySQL & Return Data]
+    H -->|No| J[Backend queries Open Library API]
+    J --> K[Cache in MySQL & Return Data]
+    I --> L[Update iOS UI]
+    K --> L
+    E --> L
 ```
 
 ## Current App State
 
 ### 🏗️ **Foundation Complete** ✅
 The app currently shows:
-- **Loading Screen**: Dark theme with Intitled logo and progress indicator
-- **Authentication Flow**: Placeholder login/signup screens (ready for Firebase integration)
+- **Loading Screen**: Dark theme with Stacks logo and progress indicator
+- **Authentication Flow**: Placeholder login/signup screens (ready for API integration)
 - **Tab Navigation**: 5-tab structure (Home, Discover, Scan, Library, Profile)
 - **Placeholder Views**: All major screens with "To be implemented" labels
 - **Badge System**: Popup animations for earned achievements
-- **Data Models**: Complete SwiftData persistence layer ready for UI implementation
+- **Data Models**: Complete Core Data persistence layer ready for API integration
 
 ### ⚠️ **CRITICAL REQUIREMENTS NEEDED**
 
@@ -220,15 +294,22 @@ The app currently shows:
 **Essential for**:
 - Testing on physical devices (currently Simulator only)
 - App Store distribution and TestFlight beta testing  
-- Push notifications and CloudKit production environment
+- Push notifications and production environment
 - Proper code signing and entitlements
 
 👉 **[Enroll at developer.apple.com](https://developer.apple.com/programs/)** before device testing
 
+#### 🗄️ **Backend API Development** 
+**Status**: ⚠️ **IN PROGRESS**
+- ✅ MySQL database schema designed
+- ❌ Backend API server implementation needed
+- ❌ Authentication endpoints required
+- ❌ Book metadata API integration needed
+
 #### 🔥 **Firebase Configuration** 
 **Status**: ⚠️ **PARTIALLY COMPLETE**
 - ✅ Firebase project created (`intilted-v1`)
-- ❌ Missing `GoogleService-Info.plist` (download from Firebase Console)
+- ❌ May need migration to new backend architecture
 - ❌ iOS App target needed in Xcode
 
 ### 🎨 **Design System Ready**
@@ -238,16 +319,18 @@ The app currently shows:
 - **Animation presets** and haptic feedback
 - **Custom shapes** for book spines and shelves
 
-### 📱 **Next: Setup & UI Implementation**
+### 📱 **Next: Setup & Implementation**
 **Immediate Steps**:
 1. **🍎 Enroll in Apple Developer Program** ($99/year)
-2. **📱 Create iOS App target** in Xcode with proper bundle ID
-3. **🔥 Add GoogleService-Info.plist** from Firebase Console
+2. **🗄️ Implement Backend API Server** (MySQL + REST API)
+3. **📱 Create iOS App target** in Xcode with proper bundle ID
+4. **🔗 Connect iOS app to backend API**
 
 **Then UI Development**:
-4. Replace placeholder views with actual shelf visualizations
-5. Add VisionKit scanner integration
-6. Implement book detail and review interfaces
+5. Replace placeholder views with actual shelf visualizations
+6. Add VisionKit scanner integration
+7. Implement book detail and review interfaces
+8. Connect to backend API for data persistence
 
 📋 **See [DEVELOPMENT-STATUS.md](DEVELOPMENT-STATUS.md) for detailed progress tracking**
 
@@ -258,21 +341,27 @@ The app currently shows:
 - [x] Authentication infrastructure  
 - [x] Design system and theming
 - [x] Badge and achievement system
-- [x] Local persistence with CloudKit sync
+- [x] Local persistence with Core Data
 
-### Phase 2: Social Features
+### Phase 2: Backend & API Integration
+- [ ] MySQL database implementation
+- [ ] RESTful API server development
+- [ ] Authentication endpoints
+- [ ] Book metadata API integration
+
+### Phase 3: Social Features
 - [ ] Friend connections
 - [ ] Review system
 - [ ] Activity feeds
 - [ ] Badge system
 
-### Phase 3: Advanced Features
+### Phase 4: Advanced Features
 - [ ] Book recommendations
 - [ ] Reading challenges
 - [ ] Export/import functionality
 - [ ] Advanced analytics
 
-### Phase 4: Expansion
+### Phase 5: Expansion
 - [ ] macOS app
 - [ ] Web companion
 - [ ] Third-party integrations
@@ -284,10 +373,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - Beautiful UI design inspired by modern reading apps
-- Firebase for robust backend infrastructure
-- Apple's SwiftUI and SwiftData frameworks
+- MySQL for robust database infrastructure
+- Apple's SwiftUI and Core Data frameworks
 - Open source book APIs for metadata
+- Modern RESTful API architecture patterns
 
 ---
 
-**Intitled** - Your books, beautifully organized. 📚✨ 
+**Stacks** - Your books, beautifully organized. 📚✨ 
