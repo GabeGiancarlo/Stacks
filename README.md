@@ -41,49 +41,113 @@ Stacks is a beautiful iOS app that lets you instantly capture, catalog, and orga
 
 ## App Vision & UI Mockups
 
+> **Note**: This app was previously named "Intitled" but has been rebranded to "Stacks" to better reflect its focus on organizing and stacking your book collection.
+
 Here's a preview of what Stacks will look like when complete. These mockups showcase the beautiful, intuitive interface designed for book lovers:
 
-### 🏠 Homepage
+### 🏠 Homepage & Library Views
+
+<table>
+<tr>
+<td width="50%">
+
 ![Homepage](UI-mockups/Homepage.png)
 *Clean, modern homepage with your reading progress and recent activity*
 
-### 📚 Library & Shelves
+</td>
+<td width="50%">
+
 ![Homepage-1](UI-mockups/Homepage-1.png)
 *Beautiful virtual bookshelf with customizable organization*
+
+</td>
+</tr>
+<tr>
+<td width="50%">
 
 ![Homepage-2](UI-mockups/Homepage-2.png)
 *Alternative shelf view with reading status indicators*
 
-### 🔍 Discovery & Search
+</td>
+<td width="50%">
+
 ![Explore](UI-mockups/Explore.png)
 *Discover new books and recommendations*
 
+</td>
+</tr>
+</table>
+
 ### 📖 Book Details & Reviews
+
+<table>
+<tr>
+<td width="50%">
+
 ![Movie Page](UI-mockups/Movie%20Page.png)
 *Detailed book information with reviews and ratings*
+
+</td>
+<td width="50%">
 
 ![Review Page](UI-mockups/Review%20Page.png)
 *Write and read detailed book reviews*
 
+</td>
+</tr>
+</table>
+
 ### 📱 Scanning & Onboarding
+
+<table>
+<tr>
+<td width="50%">
+
 ![Scan](UI-mockups/Scan.png)
 *Quick book scanning with camera integration*
+
+</td>
+<td width="50%">
 
 ![On Boarding](UI-mockups/On%20Boarding.png)
 *Welcome experience for new users*
 
+</td>
+</tr>
+</table>
+
 ### 👤 User Experience
+
+<table>
+<tr>
+<td width="50%">
+
 ![Login](UI-mockups/Login.png)
 *Simple authentication flow*
+
+</td>
+<td width="50%">
 
 ![Sign Up](UI-mockups/Sign%20Up.png)
 *Easy account creation*
 
+</td>
+</tr>
+<tr>
+<td width="50%">
+
 ![Profile](UI-mockups/Profile.png)
 *Personal profile with reading stats and achievements*
 
+</td>
+<td width="50%">
+
 ![Sidebar](UI-mockups/Sidebar.png)
 *Navigation sidebar with all app features*
+
+</td>
+</tr>
+</table>
 
 ## Architecture
 
@@ -138,7 +202,9 @@ Backend API/
 - iOS 17.0 or later
 - Swift 5.9 or later
 
-### Setup Instructions
+<!-- ### Setup Instructions
+
+*Setup instructions will be added once the backend API and iOS app structure are implemented.*
 
 1. **Clone the repository**
    ```bash
@@ -210,6 +276,7 @@ Backend API/
    cd ios/
    open Stacks.xcodeproj
    ```
+-->
 
 ## Development
 
