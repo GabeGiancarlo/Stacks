@@ -187,6 +187,160 @@ Backend API/
 - **Performance**: Optimized for smooth scrolling and quick interactions
 - **Offline Support**: Core functionality works without internet
 
+## MySQL Database Entities
+
+The following entities will be stored in the MySQL database to support all app features:
+
+### Core Entities
+
+1. **`users`** - User accounts and profiles
+   - Authentication credentials (email, hashed password)
+   - Profile information (username, display name, bio, avatar URL)
+   - Account settings and privacy preferences
+   - Reading statistics (total books read, pages read, etc.)
+   - Account creation and last login timestamps
+
+2. **`books`** - Book metadata (cached from Google Books & Open Library APIs)
+   - ISBN (primary identifier for scanning)
+   - Title, subtitle
+   - Description/synopsis
+   - Cover image URL
+   - Publication date, publisher
+   - Page count
+   - Language
+   - Source metadata (which API provided the data, last fetched timestamp)
+
+3. **`authors`** - Book authors
+   - Author name
+   - Bio, photo URL (if available)
+   - Birth/death dates (optional)
+
+4. **`genres`** - Book genres/categories
+   - Genre name (Fiction, Non-Fiction, Mystery, etc.)
+   - Category hierarchy (if applicable)
+
+### User-Book Relationships
+
+5. **`user_books`** - User's collection and reading status
+   - Links users to books (many-to-many)
+   - Reading status ("Read", "Currently Reading", "Want to Read", "Owned")
+   - Personal rating (1-5 stars)
+   - Personal notes/annotations
+   - Date added to collection
+   - Date started reading
+   - Date finished reading
+   - Current page/progress (for currently reading books)
+   - Completion percentage
+   - Custom metadata (purchase date, location, condition)
+
+6. **`reading_sessions`** - Detailed reading progress tracking
+   - Links to user_books
+   - Session date and duration
+   - Pages read in session
+   - Progress notes
+   - Reading location/environment (optional)
+
+7. **`reading_history`** - Historical reading data
+   - Completed reading sessions aggregated by date
+   - Cumulative pages read
+   - Reading streaks and statistics
+
+### Organization & Shelves
+
+8. **`shelves`** - Custom shelves created by users
+   - Shelf name and description
+   - Shelf style/preferences (wood, modern, vintage, etc.)
+   - Display order
+   - Privacy settings (public/private)
+   - Created and updated timestamps
+
+9. **`shelf_books`** - Books placed on shelves (many-to-many)
+   - Links shelves to books
+   - Display position/order on shelf
+   - Date added to shelf
+   - Custom shelf-specific notes
+
+### Social Features
+
+10. **`reviews`** - User reviews of books
+    - Links users to books
+    - Review text content
+    - Rating (1-5 stars)
+    - Helpful votes count
+    - Published status (draft/published)
+    - Privacy settings
+    - Created and updated timestamps
+
+11. **`friends`** - Friend connections between users
+    - Bidirectional relationship between two users
+    - Friendship status (active/blocked)
+    - Date connected
+    - Last interaction timestamp
+
+12. **`friend_requests`** - Pending friend requests
+    - Requester and recipient user IDs
+    - Request status (pending/accepted/rejected)
+    - Created timestamp
+    - Response timestamp
+
+13. **`activities`** - Activity feed entries
+    - Activity type (added book, finished reading, wrote review, earned badge, etc.)
+    - Actor user ID
+    - Target entity (book_id, review_id, badge_id, etc.)
+    - Activity metadata (JSON)
+    - Visibility/privacy settings
+    - Created timestamp
+
+### Badges & Achievements
+
+14. **`badges`** - Badge definitions
+    - Badge name and description
+    - Badge category (Reading, Collection, Social, Discovery)
+    - Badge tier (Bronze, Silver, Gold, Platinum, Diamond)
+    - Badge icon/image URL
+    - Unlock criteria (JSON or structured data)
+    - Points/XP value
+
+15. **`user_badges`** - Badges earned by users
+    - Links users to badges
+    - Date earned
+    - Progress toward next tier (if applicable)
+    - Display priority
+
+### Additional Supporting Entities
+
+16. **`book_authors`** - Many-to-many relationship between books and authors
+    - Links books to authors
+    - Author role/contribution type (author, co-author, illustrator, etc.)
+    - Author order/priority for display
+
+17. **`book_genres`** - Many-to-many relationship between books and genres
+    - Links books to genres
+    - Primary/secondary genre designation
+
+18. **`notifications`** - User notifications
+    - Notification type (friend request, review comment, activity mention, etc.)
+    - Recipient user ID
+    - Associated entity (friend_request_id, review_id, etc.)
+    - Notification content
+    - Read status
+    - Created timestamp
+
+### Indexes & Relationships
+
+- **Primary Keys**: All tables include auto-incrementing `id` as primary key
+- **Foreign Keys**: Proper foreign key constraints ensure referential integrity
+- **Indexes**: 
+  - ISBN on `books` (for fast scanning lookups)
+  - User ID and book ID on `user_books` (for collection queries)
+  - Email on `users` (for authentication)
+  - Created timestamps on activity/feed tables (for chronological queries)
+- **Unique Constraints**: 
+  - ISBN uniqueness on `books`
+  - Email uniqueness on `users`
+  - Username uniqueness on `users`
+  - One review per user per book on `reviews`
+
 ## Getting Started
 
 ### Prerequisites
