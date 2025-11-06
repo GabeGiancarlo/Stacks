@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stacks Database - Chen ER Diagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            overflow-x: auto;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            background: white;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+        }
+
+        .diagram-container {
+            position: relative;
+            width: 100%;
+            min-width: 1200px;
+            min-height: 3000px;
+            overflow: visible;
+        }
+
+        .entity-group {
+            position: absolute;
+        }
+
+        .entity {
+            position: absolute;
+            background: white;
+            border: 2px solid #2d3748;
+            border-radius: 3px;
+            padding: 10px 18px;
+            z-index: 10;
+        }
+
+        .entity-name {
+            font-weight: bold;
+            font-size: 0.95em;
+            color: #2d3748;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .attribute {
+            position: absolute;
+            background: white;
+            border: 2px solid #4a5568;
+            border-radius: 50%;
+            width: 100px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .attribute-text {
+            font-size: 0.65em;
+            color: #2d3748;
+            text-align: center;
+            padding: 3px;
+            line-height: 1.1;
+        }
+
+        .attribute-line {
+            position: absolute;
+            border: 1px solid #4a5568;
+            z-index: 1;
+        }
+
+        .attribute-key {
+            font-weight: bold;
+        }
+
+        .pk {
+            border-color: #e53e3e;
+            border-width: 2px;
+        }
+
+        .uk {
+            border-color: #3182ce;
+            border-width: 2px;
+        }
+
+        .fk {
+            border-color: #38a169;
+            border-width: 2px;
+        }
+
+        .zoom-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .zoom-controls button {
+            padding: 8px 15px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            background: #f7fafc;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .zoom-controls button:hover {
+            background: #edf2f7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stacks Database ER Diagram</h1>
+        <p class="subtitle">Chen Entity-Relationship Diagram - 18 Entities with Attributes</p>
+        
+        <div class="zoom-controls">
+            <button onclick="zoomIn()">Zoom In</button>
+            <button onclick="zoomOut()">Zoom Out</button>
+            <button onclick="resetZoom()">Reset</button>
+        </div>
+        
+        <div class="diagram-container" id="diagram">
+            <svg id="lines" style="position: absolute; top: 0; left: 0; width: 100%; height: 3000px; pointer-events: none; z-index: 1;"></svg>
+            
+            <!-- USERS Entity -->
+            <div class="entity-group" style="left: 30px; top: 30px;">
+                <div class="entity" id="entity-users" style="left: 0; top: 0;">
+                    <div class="entity-name">Users</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute uk" style="left: -110px; top: 25px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>email (UK)</div>
+                </div>
+                <div class="attribute uk" style="left: -110px; top: 80px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>username (UK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>password_hash</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>display_name</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 80px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">text</span><br>bio</div>
+                </div>
+                <div class="attribute" style="left: -110px; top: 135px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>avatar_url</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 135px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">json</span><br>privacy_settings</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>total_books_read</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: -80px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>total_pages_read</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: 190px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 190px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>updated_at</div>
+                </div>
+                <div class="attribute" style="left: 10px; top: 245px;" data-entity="users">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>last_login_at</div>
+                </div>
+            </div>
+
+            <!-- BOOKS Entity -->
+            <div class="entity-group" style="left: 450px; top: 30px;">
+                <div class="entity" id="entity-books" style="left: 0; top: 0;">
+                    <div class="entity-name">Books</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute uk" style="left: -110px; top: 25px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>isbn (UK)</div>
+                </div>
+                <div class="attribute" style="left: -110px; top: 80px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>title</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>subtitle</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">text</span><br>description</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 80px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>cover_image_url</div>
+                </div>
+                <div class="attribute" style="left: -110px; top: 135px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">date</span><br>publication_date</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 135px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>publisher</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>page_count</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: -80px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>language</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: 190px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>source_api</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 190px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>fetched_at</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: 245px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 245px;" data-entity="books">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>updated_at</div>
+                </div>
+            </div>
+
+            <!-- AUTHORS Entity -->
+            <div class="entity-group" style="left: 870px; top: 30px;">
+                <div class="entity" id="entity-authors" style="left: 0; top: 0;">
+                    <div class="entity-name">Authors</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="authors">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute" style="left: -110px; top: 25px;" data-entity="authors">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>name</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="authors">
+                    <div class="attribute-text"><span class="attribute-key">text</span><br>bio</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="authors">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>photo_url</div>
+                </div>
+                <div class="attribute" style="left: -110px; top: 80px;" data-entity="authors">
+                    <div class="attribute-text"><span class="attribute-key">date</span><br>birth_date</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 80px;" data-entity="authors">
+                    <div class="attribute-text"><span class="attribute-key">date</span><br>death_date</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="authors">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: -80px;" data-entity="authors">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>updated_at</div>
+                </div>
+            </div>
+
+            <!-- GENRES Entity -->
+            <div class="entity-group" style="left: 30px; top: 500px;">
+                <div class="entity" id="entity-genres" style="left: 0; top: 0;">
+                    <div class="entity-name">Genres</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="genres">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute uk" style="left: -110px; top: 25px;" data-entity="genres">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>name (UK)</div>
+                </div>
+                <div class="attribute fk" style="left: 130px; top: -30px;" data-entity="genres">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>parent_genre_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 10px; top: 80px;" data-entity="genres">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+            </div>
+
+            <!-- USER_BOOKS Entity -->
+            <div class="entity-group" style="left: 450px; top: 500px;">
+                <div class="entity" id="entity-user_books" style="left: 0; top: 0;">
+                    <div class="entity-name">User_Books</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>user_id (FK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 80px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>book_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>reading_status</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>rating</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 80px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">text</span><br>notes</div>
+                </div>
+                <div class="attribute" style="left: -110px; top: 135px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>current_page</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 135px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">decimal</span><br>completion_percentage</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">date</span><br>date_added</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: -80px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">date</span><br>date_started</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: 190px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">date</span><br>date_finished</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 190px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">json</span><br>custom_metadata</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: 245px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 245px;" data-entity="user_books">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>updated_at</div>
+                </div>
+            </div>
+
+            <!-- READING_SESSIONS Entity -->
+            <div class="entity-group" style="left: 870px; top: 500px;">
+                <div class="entity" id="entity-reading_sessions" style="left: 0; top: 0;">
+                    <div class="entity-name">Reading_Sessions</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="reading_sessions">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="reading_sessions">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>user_book_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="reading_sessions">
+                    <div class="attribute-text"><span class="attribute-key">date</span><br>session_date</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="reading_sessions">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>duration_minutes</div>
+                </div>
+                <div class="attribute" style="left: -110px; top: 80px;" data-entity="reading_sessions">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>pages_read</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 80px;" data-entity="reading_sessions">
+                    <div class="attribute-text"><span class="attribute-key">text</span><br>progress_notes</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="reading_sessions">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>reading_location</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 135px;" data-entity="reading_sessions">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+            </div>
+
+            <!-- READING_HISTORY Entity -->
+            <div class="entity-group" style="left: 30px; top: 970px;">
+                <div class="entity" id="entity-reading_history" style="left: 0; top: 0;">
+                    <div class="entity-name">Reading_History</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="reading_history">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="reading_history">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>user_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="reading_history">
+                    <div class="attribute-text"><span class="attribute-key">date</span><br>history_date</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="reading_history">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>pages_read</div>
+                </div>
+                <div class="attribute" style="left: -110px; top: 80px;" data-entity="reading_history">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>cumulative_pages_read</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 80px;" data-entity="reading_history">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>reading_streak_days</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="reading_history">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 135px;" data-entity="reading_history">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>updated_at</div>
+                </div>
+            </div>
+
+            <!-- SHELVES Entity -->
+            <div class="entity-group" style="left: 450px; top: 970px;">
+                <div class="entity" id="entity-shelves" style="left: 0; top: 0;">
+                    <div class="entity-name">Shelves</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="shelves">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="shelves">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>user_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="shelves">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>name</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="shelves">
+                    <div class="attribute-text"><span class="attribute-key">text</span><br>description</div>
+                </div>
+                <div class="attribute" style="left: -110px; top: 80px;" data-entity="shelves">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>shelf_style</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 80px;" data-entity="shelves">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>display_order</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="shelves">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>privacy_setting</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: 135px;" data-entity="shelves">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 135px;" data-entity="shelves">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>updated_at</div>
+                </div>
+            </div>
+
+            <!-- SHELF_BOOKS Entity -->
+            <div class="entity-group" style="left: 870px; top: 970px;">
+                <div class="entity" id="entity-shelf_books" style="left: 0; top: 0;">
+                    <div class="entity-name">Shelf_Books</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="shelf_books">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="shelf_books">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>shelf_id (FK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 80px;" data-entity="shelf_books">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>book_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="shelf_books">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>display_position</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="shelf_books">
+                    <div class="attribute-text"><span class="attribute-key">text</span><br>shelf_notes</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="shelf_books">
+                    <div class="attribute-text"><span class="attribute-key">date</span><br>date_added</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 135px;" data-entity="shelf_books">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+            </div>
+
+            <!-- REVIEWS Entity -->
+            <div class="entity-group" style="left: 30px; top: 1440px;">
+                <div class="entity" id="entity-reviews" style="left: 0; top: 0;">
+                    <div class="entity-name">Reviews</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="reviews">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="reviews">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>user_id (FK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 80px;" data-entity="reviews">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>book_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="reviews">
+                    <div class="attribute-text"><span class="attribute-key">text</span><br>review_content</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="reviews">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>rating</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 80px;" data-entity="reviews">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>helpful_votes</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="reviews">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>status</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: -80px;" data-entity="reviews">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>privacy_setting</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: 135px;" data-entity="reviews">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 135px;" data-entity="reviews">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>updated_at</div>
+                </div>
+            </div>
+
+            <!-- FRIENDS Entity -->
+            <div class="entity-group" style="left: 450px; top: 1440px;">
+                <div class="entity" id="entity-friends" style="left: 0; top: 0;">
+                    <div class="entity-name">Friends</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="friends">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="friends">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>user1_id (FK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 80px;" data-entity="friends">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>user2_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="friends">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>status</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="friends">
+                    <div class="attribute-text"><span class="attribute-key">date</span><br>date_connected</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 80px;" data-entity="friends">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>last_interaction_at</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="friends">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+            </div>
+
+            <!-- FRIEND_REQUESTS Entity -->
+            <div class="entity-group" style="left: 870px; top: 1440px;">
+                <div class="entity" id="entity-friend_requests" style="left: 0; top: 0;">
+                    <div class="entity-name">Friend_Requests</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="friend_requests">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="friend_requests">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>requester_id (FK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 80px;" data-entity="friend_requests">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>recipient_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="friend_requests">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>status</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="friend_requests">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 135px;" data-entity="friend_requests">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>responded_at</div>
+                </div>
+            </div>
+
+            <!-- ACTIVITIES Entity -->
+            <div class="entity-group" style="left: 30px; top: 1910px;">
+                <div class="entity" id="entity-activities" style="left: 0; top: 0;">
+                    <div class="entity-name">Activities</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="activities">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="activities">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>user_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="activities">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>activity_type</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 80px;" data-entity="activities">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>target_book_id (FK)</div>
+                </div>
+                <div class="attribute fk" style="left: 130px; top: 80px;" data-entity="activities">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>target_review_id (FK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 135px;" data-entity="activities">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>target_badge_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 135px;" data-entity="activities">
+                    <div class="attribute-text"><span class="attribute-key">json</span><br>activity_metadata</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="activities">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>visibility</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 190px;" data-entity="activities">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+            </div>
+
+            <!-- BADGES Entity -->
+            <div class="entity-group" style="left: 450px; top: 1910px;">
+                <div class="entity" id="entity-badges" style="left: 0; top: 0;">
+                    <div class="entity-name">Badges</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="badges">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute uk" style="left: -110px; top: 25px;" data-entity="badges">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>name (UK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="badges">
+                    <div class="attribute-text"><span class="attribute-key">text</span><br>description</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="badges">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>category</div>
+                </div>
+                <div class="attribute" style="left: -110px; top: 80px;" data-entity="badges">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>tier</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 80px;" data-entity="badges">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>icon_url</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="badges">
+                    <div class="attribute-text"><span class="attribute-key">json</span><br>unlock_criteria</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: -80px;" data-entity="badges">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>points_value</div>
+                </div>
+                <div class="attribute" style="left: 10px; top: 135px;" data-entity="badges">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+            </div>
+
+            <!-- USER_BADGES Entity -->
+            <div class="entity-group" style="left: 870px; top: 1910px;">
+                <div class="entity" id="entity-user_badges" style="left: 0; top: 0;">
+                    <div class="entity-name">User_Badges</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="user_badges">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="user_badges">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>user_id (FK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 80px;" data-entity="user_badges">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>badge_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="user_badges">
+                    <div class="attribute-text"><span class="attribute-key">date</span><br>date_earned</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="user_badges">
+                    <div class="attribute-text"><span class="attribute-key">decimal</span><br>progress_to_next_tier</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 80px;" data-entity="user_badges">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>display_priority</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="user_badges">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+            </div>
+
+            <!-- BOOK_AUTHORS Entity -->
+            <div class="entity-group" style="left: 30px; top: 2380px;">
+                <div class="entity" id="entity-book_authors" style="left: 0; top: 0;">
+                    <div class="entity-name">Book_Authors</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="book_authors">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="book_authors">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>book_id (FK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 80px;" data-entity="book_authors">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>author_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="book_authors">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>role</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: 25px;" data-entity="book_authors">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>author_order</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="book_authors">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+            </div>
+
+            <!-- BOOK_GENRES Entity -->
+            <div class="entity-group" style="left: 450px; top: 2380px;">
+                <div class="entity" id="entity-book_genres" style="left: 0; top: 0;">
+                    <div class="entity-name">Book_Genres</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="book_genres">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="book_genres">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>book_id (FK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 80px;" data-entity="book_genres">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>genre_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="book_genres">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>designation</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="book_genres">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+            </div>
+
+            <!-- NOTIFICATIONS Entity -->
+            <div class="entity-group" style="left: 870px; top: 2380px;">
+                <div class="entity" id="entity-notifications" style="left: 0; top: 0;">
+                    <div class="entity-name">Notifications</div>
+                </div>
+                <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="notifications">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>id (PK)</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 25px;" data-entity="notifications">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>recipient_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: 130px; top: -30px;" data-entity="notifications">
+                    <div class="attribute-text"><span class="attribute-key">string</span><br>notification_type</div>
+                </div>
+                <div class="attribute fk" style="left: -110px; top: 80px;" data-entity="notifications">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>associated_friend_request_id (FK)</div>
+                </div>
+                <div class="attribute fk" style="left: 130px; top: 80px;" data-entity="notifications">
+                    <div class="attribute-text"><span class="attribute-key">int</span><br>associated_review_id (FK)</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: -80px;" data-entity="notifications">
+                    <div class="attribute-text"><span class="attribute-key">text</span><br>notification_content</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: -80px;" data-entity="notifications">
+                    <div class="attribute-text"><span class="attribute-key">boolean</span><br>is_read</div>
+                </div>
+                <div class="attribute" style="left: -50px; top: 135px;" data-entity="notifications">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
+                </div>
+                <div class="attribute" style="left: 70px; top: 135px;" data-entity="notifications">
+                    <div class="attribute-text"><span class="attribute-key">datetime</span><br>read_at</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentZoom = 1;
+        const zoomStep = 0.1;
+
+        function updateZoom() {
+            const diagram = document.getElementById('diagram');
+            diagram.style.transform = `scale(${currentZoom})`;
+            diagram.style.transformOrigin = 'top left';
+        }
+
+        function zoomIn() {
+            currentZoom = Math.min(currentZoom + zoomStep, 2);
+            updateZoom();
+        }
+
+        function zoomOut() {
+            currentZoom = Math.max(currentZoom - zoomStep, 0.5);
+            updateZoom();
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            updateZoom();
+        }
+
+        // Center each entity rectangle relative to its attributes
+        function centerEntities() {
+            const entityGroups = document.querySelectorAll('.entity-group');
+            
+            entityGroups.forEach(group => {
+                const entity = group.querySelector('.entity');
+                if (!entity) return;
+                
+                const entityId = entity.id.replace('entity-', '');
+                const attributes = group.querySelectorAll(`.attribute[data-entity="${entityId}"]`);
+                
+                if (attributes.length === 0) return;
+                
+                // Calculate bounding box of all attributes
+                let minLeft = Infinity;
+                let maxLeft = -Infinity;
+                let minTop = Infinity;
+                let maxTop = -Infinity;
+                
+                attributes.forEach(attr => {
+                    const left = parseFloat(attr.style.left) || 0;
+                    const top = parseFloat(attr.style.top) || 0;
+                    const width = 100; // attribute width
+                    const height = 50; // attribute height
+                    
+                    minLeft = Math.min(minLeft, left);
+                    maxLeft = Math.max(maxLeft, left + width);
+                    minTop = Math.min(minTop, top);
+                    maxTop = Math.max(maxTop, top + height);
+                });
+                
+                // Ensure attributes don't go off-page
+                const entityGroupRect = group.getBoundingClientRect();
+                const groupLeft = parseFloat(group.style.left) || 0;
+                if (minLeft + groupLeft < 0) {
+                    // Shift entire group right if attributes would go off left edge
+                    const shift = Math.abs(minLeft + groupLeft) + 10;
+                    group.style.left = (groupLeft + shift) + 'px';
+                }
+                
+                // Calculate center of attributes
+                const centerX = (minLeft + maxLeft) / 2;
+                const centerY = (minTop + maxTop) / 2;
+                
+                // Get entity dimensions
+                const entityRect = entity.getBoundingClientRect();
+                const entityWidth = entityRect.width || 120;
+                const entityHeight = entityRect.height || 50;
+                
+                // Ensure entity doesn't overlap with attributes
+                // Attributes are at -110px (left) and 130px (right), so entity should be at least 50px wide
+                // Position entity at center, accounting for its own dimensions
+                const entityLeft = centerX - entityWidth / 2;
+                const entityTop = centerY - entityHeight / 2;
+                
+                // Check if entity would overlap with leftmost attribute
+                const leftmostAttrX = minLeft;
+                const rightmostAttrX = maxLeft;
+                const entityRight = entityLeft + entityWidth;
+                
+                // Adjust if entity would overlap with attributes
+                if (entityLeft < rightmostAttrX && entityLeft > leftmostAttrX) {
+                    // Entity is between attributes, center it
+                    entity.style.left = (centerX - entityWidth / 2) + 'px';
+                } else {
+                    entity.style.left = entityLeft + 'px';
+                }
+                entity.style.top = entityTop + 'px';
+            });
+        }
+
+        // Draw connecting lines between entities and attributes
+        function drawLines() {
+            const svg = document.getElementById('lines');
+            svg.innerHTML = '';
+            
+            // Update SVG size to cover entire diagram
+            const container = document.querySelector('.diagram-container');
+            const containerRect = container.getBoundingClientRect();
+            const containerHeight = Math.max(container.scrollHeight, containerRect.height, 3000);
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', containerHeight + 'px');
+            svg.style.height = containerHeight + 'px';
+            
+            const attributes = document.querySelectorAll('.attribute');
+            attributes.forEach(attr => {
+                const entityId = attr.getAttribute('data-entity');
+                const entity = document.getElementById(`entity-${entityId}`);
+                
+                if (entity) {
+                    const attrRect = attr.getBoundingClientRect();
+                    const entityRect = entity.getBoundingClientRect();
+                    const containerRect = document.querySelector('.diagram-container').getBoundingClientRect();
+                    
+                    const attrX = attrRect.left - containerRect.left + attrRect.width / 2;
+                    const attrY = attrRect.top - containerRect.top + attrRect.height / 2;
+                    const entityX = entityRect.left - containerRect.left + entityRect.width / 2;
+                    const entityY = entityRect.top - containerRect.top + entityRect.height / 2;
+                    
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', attrX);
+                    line.setAttribute('y1', attrY);
+                    line.setAttribute('x2', entityX);
+                    line.setAttribute('y2', entityY);
+                    line.setAttribute('stroke', '#4a5568');
+                    line.setAttribute('stroke-width', '1');
+                    svg.appendChild(line);
+                }
+            });
+        }
+
+        window.addEventListener('load', () => {
+            centerEntities();
+            setTimeout(() => {
+                drawLines();
+            }, 200);
+        });
+        window.addEventListener('resize', () => {
+            centerEntities();
+            setTimeout(() => {
+                drawLines();
+            }, 200);
+        });
+    </script>
+</body>
+</html>
