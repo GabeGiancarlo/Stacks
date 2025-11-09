@@ -20,11 +20,22 @@
             overflow-x: auto;
         }
 
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            z-index: 2000;
+            padding: 20px 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
         .container {
             max-width: 100%;
             margin: 0;
             background: white;
-            padding: 30px;
+            padding: 0;
         }
 
         h1 {
@@ -38,15 +49,21 @@
             text-align: center;
             color: #718096;
             font-size: 1.1em;
-            margin-bottom: 40px;
+            margin-bottom: 0;
         }
 
         .diagram-container {
-            position: relative;
+            position: fixed;
+            top: 140px;
+            left: 0;
+            right: 0;
+            bottom: 0;
             width: 100%;
+            height: calc(100vh - 140px);
             overflow: hidden;
-            padding: 150px;
+            padding: 10px;
             cursor: grab;
+            z-index: 1;
         }
 
         .diagram-container.dragging {
@@ -81,8 +98,8 @@
             background: white;
             border: 2px solid #4a5568;
             border-radius: 50%;
-            width: 100px;
-            height: 50px;
+            width: 130px;
+            height: 65px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -90,17 +107,30 @@
         }
 
         .attribute-text {
-            font-size: 0.65em;
+            font-size: 0.6em;
             color: #2d3748;
             text-align: center;
-            padding: 3px;
-            line-height: 1.1;
+            padding: 8px;
+            line-height: 1.2;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            max-width: 100%;
         }
 
         .attribute-line {
             position: absolute;
             border: 1px solid #4a5568;
             z-index: 1;
+        }
+
+        .attribute-connection-line {
+            position: absolute;
+            background-color: #1a202c;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.5;
+            height: 1px;
         }
 
         .attribute-key {
@@ -127,7 +157,7 @@
 
         .zoom-controls {
             position: fixed;
-            top: 20px;
+            top: 150px;
             right: 20px;
             z-index: 1000;
             background: white;
@@ -151,7 +181,7 @@
 
         .legend {
             position: fixed;
-            top: 20px;
+            top: 150px;
             left: 20px;
             z-index: 1000;
             background: white;
@@ -282,10 +312,12 @@
     </style>
 </head>
 <body>
-        <div class="container">
+        <div class="header">
         <h1>Stacks Database ER Diagram</h1>
         <p class="subtitle">Chen Entity-Relationship Diagram - 18 Entities with Attributes</p>
+        </div>
         
+        <div class="container">
         <div class="zoom-controls">
             <button onclick="zoomIn()">Zoom In</button>
             <button onclick="zoomOut()">Zoom Out</button>
@@ -491,7 +523,7 @@
 
             <!-- USER_BOOKS Entity -->
             <div class="entity-group" style="left: 1900px; top: 1600px;">
-                <div class="entity" id="entity-user_books" style="left: 0; top: 0;">
+                <div class="entity" id="entity-user_books" style="left: -25px; top: 0;">
                     <div class="entity-name">User_Books</div>
                 </div>
                 <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="user_books">
@@ -540,7 +572,7 @@
 
             <!-- READING_SESSIONS Entity -->
             <div class="entity-group" style="left: 2900px; top: 1600px;">
-                <div class="entity" id="entity-reading_sessions" style="left: 0; top: 0;">
+                <div class="entity" id="entity-reading_sessions" style="left: -50px; top: 0;">
                     <div class="entity-name">Reading_Sessions</div>
                 </div>
                 <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="reading_sessions">
@@ -571,7 +603,7 @@
 
             <!-- READING_HISTORY Entity -->
             <div class="entity-group" style="left: 2400px; top: 3000px;">
-                <div class="entity" id="entity-reading_history" style="left: 0; top: 0;">
+                <div class="entity" id="entity-reading_history" style="left: -50px; top: 0;">
                     <div class="entity-name">Reading_History</div>
                 </div>
                 <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="reading_history">
@@ -636,7 +668,7 @@
 
             <!-- SHELF_BOOKS Entity -->
             <div class="entity-group" style="left: 2900px; top: 2800px;">
-                <div class="entity" id="entity-shelf_books" style="left: 0; top: 0;">
+                <div class="entity" id="entity-shelf_books" style="left: -25px; top: 0;">
                     <div class="entity-name">Shelf_Books</div>
                 </div>
                 <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="shelf_books">
@@ -822,7 +854,7 @@
 
             <!-- USER_BADGES Entity -->
             <div class="entity-group" style="left: 1900px; top: 1000px;">
-                <div class="entity" id="entity-user_badges" style="left: 0; top: 0;">
+                <div class="entity" id="entity-user_badges" style="left: -25px; top: 0;">
                     <div class="entity-name">User_Badges</div>
                 </div>
                 <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="user_badges">
@@ -850,7 +882,7 @@
 
             <!-- BOOK_AUTHORS Entity -->
             <div class="entity-group" style="left: 1100px; top: 1600px;">
-                <div class="entity" id="entity-book_authors" style="left: 0; top: 0;">
+                <div class="entity" id="entity-book_authors" style="left: -25px; top: 0;">
                     <div class="entity-name">Book_Authors</div>
                 </div>
                 <div class="attribute pk" style="left: -110px; top: -30px;" data-entity="book_authors">
@@ -1078,8 +1110,8 @@
             attributes.forEach(attr => {
                 const attrLeft = parseFloat(attr.style.left) || 0;
                 const attrTop = parseFloat(attr.style.top) || 0;
-                const attrWidth = 100;
-                const attrHeight = 50;
+                const attrWidth = 130;
+                const attrHeight = 65;
                 
                 minX = Math.min(minX, attrLeft);
                 maxX = Math.max(maxX, attrLeft + attrWidth);
@@ -1101,9 +1133,9 @@
         function layoutEntityGroups() {
             const entityGroups = Array.from(document.querySelectorAll('.entity-group'));
             const containerPadding = 200;
-            const spacing = 400; // Space between entity groups
+            const spacing = 700; // Space between entity groups (increased from 400)
             
-            // First, center entities within their attribute clusters
+            // First, center entities within their attribute clusters with padding to avoid overlaps
             entityGroups.forEach(group => {
                 const entity = group.querySelector('.entity');
                 if (!entity) return;
@@ -1122,8 +1154,8 @@
                 attributes.forEach(attr => {
                     const left = parseFloat(attr.style.left) || 0;
                     const top = parseFloat(attr.style.top) || 0;
-                    const width = 100;
-                    const height = 50;
+                    const width = 130;
+                    const height = 65;
                     
                     minLeft = Math.min(minLeft, left);
                     maxLeft = Math.max(maxLeft, left + width);
@@ -1131,18 +1163,112 @@
                     maxTop = Math.max(maxTop, top + height);
                 });
                 
-                // Calculate center of attributes bounding box
-                const centerX = (minLeft + maxLeft) / 2;
-                const centerY = (minTop + maxTop) / 2;
-                
                 // Get entity dimensions
                 const entityRect = entity.getBoundingClientRect();
                 const entityWidth = entityRect.width || 120;
                 const entityHeight = entityRect.height || 50;
                 
-                // Position entity at the center of the attribute cluster
-                const entityLeft = centerX - entityWidth / 2;
-                const entityTop = centerY - entityHeight / 2;
+                // Add padding around entity to prevent overlap with attributes
+                const entityPadding = 20; // Padding in pixels
+                const paddedEntityWidth = entityWidth + entityPadding * 2;
+                const paddedEntityHeight = entityHeight + entityPadding * 2;
+                
+                // Calculate center of attributes bounding box
+                const centerX = (minLeft + maxLeft) / 2;
+                const centerY = (minTop + maxTop) / 2;
+                
+                // Add padding around entity to prevent overlap with attributes
+                const entityMargin = 20; // Minimum margin between entity and attributes
+                
+                // Expand the attribute bounding box by entity size + margin
+                const expandedMinLeft = minLeft - entityWidth / 2 - entityMargin;
+                const expandedMaxLeft = maxLeft + entityWidth / 2 + entityMargin;
+                const expandedMinTop = minTop - entityHeight / 2 - entityMargin;
+                const expandedMaxTop = maxTop + entityHeight / 2 + entityMargin;
+                
+                // Check if center position would cause overlap
+                const entityLeftAtCenter = centerX - entityWidth / 2;
+                const entityRightAtCenter = centerX + entityWidth / 2;
+                const entityTopAtCenter = centerY - entityHeight / 2;
+                const entityBottomAtCenter = centerY + entityHeight / 2;
+                
+                let finalX = centerX;
+                let finalY = centerY;
+                
+                // Check if entity at center overlaps with any attribute
+                let overlaps = false;
+                attributes.forEach(attr => {
+                const attrLeft = parseFloat(attr.style.left) || 0;
+                const attrTop = parseFloat(attr.style.top) || 0;
+                    const attrRight = attrLeft + 130;
+                    const attrBottom = attrTop + 65;
+                    
+                    if (!(entityRightAtCenter < attrLeft || entityLeftAtCenter > attrRight || 
+                          entityBottomAtCenter < attrTop || entityTopAtCenter > attrBottom)) {
+                        overlaps = true;
+                    }
+                });
+                
+                // If overlaps, position entity outside the expanded bounding box
+                if (overlaps) {
+                    // Try positions around the expanded bounding box (positions are entity center coordinates)
+                    const positions = [
+                        { x: expandedMinLeft - entityMargin, y: centerY }, // Left
+                        { x: expandedMaxLeft + entityMargin, y: centerY }, // Right
+                        { x: centerX, y: expandedMinTop - entityMargin }, // Top
+                        { x: centerX, y: expandedMaxTop + entityMargin }, // Bottom
+                        { x: expandedMinLeft - entityMargin, y: expandedMinTop - entityMargin }, // Top-left
+                        { x: expandedMaxLeft + entityMargin, y: expandedMinTop - entityMargin }, // Top-right
+                        { x: expandedMinLeft - entityMargin, y: expandedMaxTop + entityMargin }, // Bottom-left
+                        { x: expandedMaxLeft + entityMargin, y: expandedMaxTop + entityMargin }  // Bottom-right
+                    ];
+                    
+                    // Find position with least overlap
+                    let bestPosition = positions[0];
+                    let minOverlaps = Infinity;
+                    
+                    positions.forEach(pos => {
+                        let overlapCount = 0;
+                        const testEntityLeft = pos.x - entityWidth / 2;
+                        const testEntityRight = pos.x + entityWidth / 2;
+                        const testEntityTop = pos.y - entityHeight / 2;
+                        const testEntityBottom = pos.y + entityHeight / 2;
+                        
+                        attributes.forEach(attr => {
+                            const attrLeft = parseFloat(attr.style.left) || 0;
+                            const attrTop = parseFloat(attr.style.top) || 0;
+                            const attrRight = attrLeft + 130;
+                            const attrBottom = attrTop + 65;
+                            
+                            if (!(testEntityRight < attrLeft || testEntityLeft > attrRight || 
+                                  testEntityBottom < attrTop || testEntityTop > attrBottom)) {
+                                overlapCount++;
+                            }
+                        });
+                        
+                        if (overlapCount < minOverlaps) {
+                            minOverlaps = overlapCount;
+                            bestPosition = pos;
+                        }
+                    });
+                    
+                    finalX = bestPosition.x;
+                    finalY = bestPosition.y;
+                }
+                
+                // Position entity
+                let entityLeft = finalX - entityWidth / 2;
+                const entityTop = finalY - entityHeight / 2;
+                
+                // Apply left offset for specific entities that need to be more centered
+                const entitiesNeedingLargeLeftOffset = ['entity-reading_sessions', 'entity-reading_history'];
+                const entitiesNeedingSmallLeftOffset = ['entity-user_books', 'entity-shelf_books', 'entity-user_badges', 'entity-book_authors'];
+                
+                if (entitiesNeedingLargeLeftOffset.includes(entity.id)) {
+                    entityLeft -= 50; // Shift 50px to the left for better centering
+                } else if (entitiesNeedingSmallLeftOffset.includes(entity.id)) {
+                    entityLeft -= 25; // Shift 25px to the left for better centering
+                }
                 
                 entity.style.left = entityLeft + 'px';
                 entity.style.top = entityTop + 'px';
@@ -1178,6 +1304,104 @@
             
             // Update container size
             updateContainerSize();
+            // Draw attribute connection lines
+            setTimeout(() => {
+                drawAttributeConnectionLines();
+            }, 100);
+        }
+        
+        // Draw lines connecting attributes to their entities
+        function drawAttributeConnectionLines() {
+            const container = document.querySelector('.diagram-container');
+            
+            // Remove existing connection lines
+            const existingLines = container.querySelectorAll('.attribute-connection-line');
+            existingLines.forEach(line => line.remove());
+            
+            const entityGroups = document.querySelectorAll('.entity-group');
+            
+            entityGroups.forEach(group => {
+                const entity = group.querySelector('.entity');
+                if (!entity) return;
+                
+                const entityId = entity.id.replace('entity-', '');
+                const attributes = group.querySelectorAll(`.attribute[data-entity="${entityId}"]`);
+                
+                if (attributes.length === 0) return;
+                
+                // Get entity position and dimensions
+                const groupLeft = parseFloat(group.style.left) || 0;
+                const groupTop = parseFloat(group.style.top) || 0;
+                const entityLeft = parseFloat(entity.style.left) || 0;
+                const entityTop = parseFloat(entity.style.top) || 0;
+                const entityRect = entity.getBoundingClientRect();
+                const entityWidth = entityRect.width || 120;
+                const entityHeight = entityRect.height || 50;
+                
+                const entityCenterX = groupLeft + entityLeft + entityWidth / 2;
+                const entityCenterY = groupTop + entityTop + entityHeight / 2;
+                
+                // Draw line from each attribute to entity
+                attributes.forEach(attr => {
+                    const attrLeft = parseFloat(attr.style.left) || 0;
+                    const attrTop = parseFloat(attr.style.top) || 0;
+                    const attrWidth = 130;
+                    const attrHeight = 65;
+                    
+                    const attrCenterX = groupLeft + attrLeft + attrWidth / 2;
+                    const attrCenterY = groupTop + attrTop + attrHeight / 2;
+                    
+                    // Calculate distance and angle
+                    const dx = entityCenterX - attrCenterX;
+                    const dy = entityCenterY - attrCenterY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                    
+                    // Calculate connection points on the edges of attribute and entity
+                    // For attribute (oval), find edge point closest to entity
+                    const attrAngle = Math.atan2(dy, dx);
+                    const attrEdgeX = attrCenterX + Math.cos(attrAngle) * (attrWidth / 2);
+                    const attrEdgeY = attrCenterY + Math.sin(attrAngle) * (attrHeight / 2);
+                    
+                    // For entity (rectangle), find edge point closest to attribute
+                    const entityAngle = Math.atan2(-dy, -dx);
+                    let entityEdgeX, entityEdgeY;
+                    
+                    // Determine which edge of the rectangle the line should connect to
+                    const absDx = Math.abs(dx);
+                    const absDy = Math.abs(dy);
+                    const entityHalfWidth = entityWidth / 2;
+                    const entityHalfHeight = entityHeight / 2;
+                    
+                    if (absDx / entityHalfWidth > absDy / entityHalfHeight) {
+                        // Connect to left or right edge
+                        entityEdgeX = entityCenterX + (dx > 0 ? entityHalfWidth : -entityHalfWidth);
+                        entityEdgeY = entityCenterY + (dy / absDx) * entityHalfWidth * (dx > 0 ? 1 : -1);
+                    } else {
+                        // Connect to top or bottom edge
+                        entityEdgeY = entityCenterY + (dy > 0 ? entityHalfHeight : -entityHalfHeight);
+                        entityEdgeX = entityCenterX + (dx / absDy) * entityHalfHeight * (dy > 0 ? 1 : -1);
+                    }
+                    
+                    // Calculate line length and position
+                    const lineDx = entityEdgeX - attrEdgeX;
+                    const lineDy = entityEdgeY - attrEdgeY;
+                    const lineLength = Math.sqrt(lineDx * lineDx + lineDy * lineDy);
+                    const lineAngle = Math.atan2(lineDy, lineDx) * 180 / Math.PI;
+                    
+                    // Create line element
+                    const line = document.createElement('div');
+                    line.className = 'attribute-connection-line';
+                    line.style.width = lineLength + 'px';
+                    line.style.height = '1px';
+                    line.style.left = attrEdgeX + 'px';
+                    line.style.top = attrEdgeY + 'px';
+                    line.style.transformOrigin = '0 50%';
+                    line.style.transform = `rotate(${lineAngle}deg)`;
+                    
+                    container.appendChild(line);
+                });
+            });
         }
         
         // Legacy function name for compatibility
@@ -1208,8 +1432,8 @@
                     attributes.forEach(attr => {
                         const attrLeft = parseFloat(attr.style.left) || 0;
                         const attrTop = parseFloat(attr.style.top) || 0;
-                        const attrWidth = 100;
-                        const attrHeight = 50;
+                        const attrWidth = 130;
+                        const attrHeight = 65;
                         
                         const absoluteLeft = groupLeft + attrLeft;
                         const absoluteRight = groupLeft + attrLeft + attrWidth;
@@ -1264,8 +1488,12 @@
             
             // Set container dimensions with padding - only use actual content bounds
             // Don't set minimums - use actual content size
-            const containerWidth = maxRight - minLeft + containerPadding * 2;
+            const contentWidth = maxRight - minLeft + containerPadding * 2;
             const containerHeight = maxBottom + containerPadding;
+            
+            // Ensure container width is at least the viewport width
+            const viewportWidth = window.innerWidth;
+            const containerWidth = Math.max(contentWidth, viewportWidth);
             
             // Only set if we have valid bounds
             if (containerWidth > 0 && containerHeight > 0 && isFinite(containerWidth) && isFinite(containerHeight)) {
@@ -1599,8 +1827,8 @@
                 attributes.forEach(attr => {
                     const attrLeft = parseFloat(attr.style.left) || 0;
                     const attrTop = parseFloat(attr.style.top) || 0;
-                    const attrWidth = 100;
-                    const attrHeight = 50;
+                    const attrWidth = 130;
+                    const attrHeight = 65;
                     
                     minX = Math.min(minX, groupLeft + attrLeft);
                     maxX = Math.max(maxX, groupLeft + attrLeft + attrWidth);
@@ -1643,12 +1871,34 @@
             }
         }
 
+        // Increase spacing between attributes
+        function increaseAttributeSpacing() {
+            const spacingMultiplier = 1.4; // Increase spacing by 40%
+            const entityGroups = document.querySelectorAll('.entity-group');
+            
+            entityGroups.forEach(group => {
+                const attributes = group.querySelectorAll('.attribute');
+                attributes.forEach(attr => {
+                    const currentLeft = parseFloat(attr.style.left) || 0;
+                    const currentTop = parseFloat(attr.style.top) || 0;
+                    
+                    // Scale the positions to increase spacing
+                    attr.style.left = (currentLeft * spacingMultiplier) + 'px';
+                    attr.style.top = (currentTop * spacingMultiplier) + 'px';
+                });
+            });
+        }
+
         window.addEventListener('load', () => {
-            // First layout the entities properly
+            // First increase attribute spacing
+            increaseAttributeSpacing();
+            // Then layout the entities properly
             layoutEntityGroups();
             setTimeout(() => {
                 // Fit view to entities
                 fitViewToContent();
+                // Draw attribute connection lines
+                drawAttributeConnectionLines();
                 // Relationships removed for now
                 // drawRelationships();
                 updateContainerSize();
@@ -1657,6 +1907,8 @@
         window.addEventListener('resize', () => {
             layoutEntityGroups();
             setTimeout(() => {
+                // Draw attribute connection lines
+                drawAttributeConnectionLines();
                 // Relationships removed for now
                 // drawRelationships();
                 updateContainerSize();
