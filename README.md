@@ -163,21 +163,32 @@ Stacks follows **MVVM-C (Model-View-ViewModel-Coordinator)** architecture with a
 ### Project Structure
 
 ```
-iOS App (SwiftUI)/
-├── StacksApp/           # Main app entry point and coordination
-├── DataLayer/           # Core Data models and local persistence
-├── ServicesLayer/       # API services and network layer
-├── LibraryFeature/      # Library and shelf management
-├── ScannerFeature/      # Book scanning functionality
-├── ProfileFeature/      # User profiles and social features
-├── DiscoverFeature/     # Book discovery and recommendations
-└── Resources/           # Design system and shared resources
+Stacks/
+├── Stacks/                          # iOS App (SwiftUI)
+│   ├── Models/                     # Data models (User, Book, Shelf, Review, etc.)
+│   ├── Views/                       # SwiftUI views organized by feature
+│   │   ├── Authentication/         # Login, Sign Up, Onboarding
+│   │   ├── Home/                    # Home screen and sidebar
+│   │   ├── Explore/                 # Book discovery
+│   │   ├── Scan/                    # Book scanning
+│   │   ├── Library/                 # User's library
+│   │   ├── BookDetail/              # Book detail page
+│   │   ├── Review/                  # Review views
+│   │   └── Profile/                 # User profile
+│   ├── ViewModels/                  # MVVM view models
+│   ├── Services/                    # API service interfaces and mock implementations
+│   ├── DesignSystem/                # Theme, colors, typography, components
+│   ├── StacksApp.swift             # App entry point
+│   └── ContentView.swift           # Root view
+├── Database-Assignment/             # Database schema and ER diagrams
+├── UI-mockups/                      # Design mockups
+└── README.md                        # This file
 
-Backend API/
-├── Database/            # MySQL schema and migrations
-├── API/                 # RESTful endpoints
-├── Services/            # Business logic and external API integration
-└── Authentication/     # User auth and session management
+Backend API/ (To be implemented)
+├── Database/                        # MySQL schema and migrations
+├── API/                             # RESTful endpoints
+├── Services/                        # Business logic and external API integration
+└── Authentication/                  # User auth and session management
 ```
 
 ### Design Principles
@@ -348,10 +359,9 @@ The following entities will be stored in the MySQL database to support all app f
 - Xcode 15.0 or later
 - iOS 17.0 or later
 - Swift 5.9 or later
+- macOS 14.0 or later (for development)
 
-<!-- ### Setup Instructions
-
-*Setup instructions will be added once the backend API and iOS app structure are implemented.*
+### iOS App Setup
 
 1. **Clone the repository**
    ```bash
@@ -359,92 +369,73 @@ The following entities will be stored in the MySQL database to support all app f
    cd Stacks
    ```
 
-2. **Backend API Setup**
+2. **Open the project in Xcode**
    ```bash
-   # Navigate to backend directory
-   cd backend/
-   
-   # Install dependencies (Node.js/Python/Go depending on implementation)
-   npm install  # or pip install -r requirements.txt
-   
-   # Configure MySQL database
-   # Create database and run migrations
-   mysql -u root -p < database/schema.sql
-   
-   # Set environment variables
-   cp .env.example .env
-   # Edit .env with your database credentials and API keys
-   ```
-
-3. **iOS App Setup**
-   ```bash
-   # Navigate to iOS app directory
-   cd ios/
-   
-   # Install dependencies via Swift Package Manager
-   # Xcode will automatically resolve packages when you open the project
-   ```
-
-4. **Configure API Endpoints**
-   - Update API base URL in iOS app configuration
-   - Ensure backend server is running and accessible
-   - Configure authentication endpoints
-
-5. **Assets Setup** (Required for UI completion)
-   ```
-   Create an Assets.xcassets folder with:
-   
-   📁 Assets.xcassets/
-   ├── 📁 AppIcon.appiconset/         # App icon variants
-   ├── 📁 AccentColor.colorset/       # Gold accent color (#D4AF37)
-   ├── 📁 ShelfTextures/              # Shelf background textures
-   │   ├── classic-wood.imageset/     # Classic wood texture
-   │   ├── modern-dark.imageset/      # Dark modern texture
-   │   ├── vintage.imageset/          # Vintage wood texture
-   │   └── white-minimal.imageset/    # Clean white texture
-   ├── 📁 BookCovers/                 # Sample book cover images
-   │   ├── placeholder-book.imageset/ # Default book cover
-   │   └── sample-covers.imageset/    # Sample covers for demo
-   └── 📁 BadgeIcons/                 # Custom badge graphics
-       ├── bronze-badge.imageset/     # Bronze tier badge
-       ├── silver-badge.imageset/     # Silver tier badge
-       ├── gold-badge.imageset/       # Gold tier badge
-       ├── platinum-badge.imageset/   # Platinum tier badge
-       └── diamond-badge.imageset/    # Diamond tier badge
-   ```
-
-6. **Build and run**
-   ```bash
-   # Start backend server
-   cd backend/
-   npm start  # or python app.py / go run main.go
-   
-   # Build iOS app
-   cd ios/
    open Stacks.xcodeproj
    ```
--->
+
+3. **Add files to project** (if needed)
+   - If Xcode prompts you to add files, accept all
+   - Or manually add all Swift files from the `Stacks/` directory to the project
+
+4. **Select a simulator**
+   - Choose iPhone 15 Pro or any iOS 17+ simulator
+   - Press `Cmd + R` to build and run
+
+5. **Run the app**
+   - The app will launch with an onboarding screen
+   - You can create an account or login (mock authentication)
+   - All features are functional with mock data
+
+📋 **For detailed setup instructions, see [SETUP.md](SETUP.md)**
+
+### Backend API Setup (Coming Soon)
+
+The backend API server is currently in development. Once available:
+
+1. **Configure MySQL database**
+   ```bash
+   mysql -u root -p < Database-Assignment/schema.sql
+   ```
+
+2. **Set up environment variables**
+   - Configure database credentials
+   - Add Google Books API key
+   - Add Open Library API credentials
+
+3. **Start the backend server**
+   - Follow backend-specific setup instructions
+
+4. **Connect iOS app to backend**
+   - Update API base URL in service implementations
+   - Replace mock services with real API calls
 
 ## Development
 
 ### Code Style
 
 - **Swift**: Idiomatic Swift with modern async/await patterns
-- **Architecture**: MVVM-C with coordinator-driven navigation
-- **Testing**: Comprehensive unit and integration tests (target: ≥50% coverage)
-- **Linting**: SwiftLint configuration for consistent code style
+- **Architecture**: MVVM (Model-View-ViewModel) with protocol-based services
+- **Concurrency**: Swift Concurrency (async/await) throughout
+- **Testing**: Mock services ready for unit testing (target: ≥50% coverage)
+- **Code Organization**: Feature-based folder structure
 
 ### Key Technologies
 
-**iOS Client**
+**iOS Client** ✅ **Implemented**
 - **SwiftUI**: Modern declarative UI framework
-- **Core Data**: Local persistence and caching
-- **VisionKit**: Advanced computer vision for book scanning
-- **Combine**: Reactive programming for UI updates and API communication
-- **Swift Package Manager**: Dependency management
+- **Swift Concurrency**: async/await for all asynchronous operations
+- **MVVM Architecture**: Clean separation of concerns
+- **Protocol-Oriented**: Service interfaces for easy testing and swapping
+- **Design System**: Reusable components and theming
 
-**Backend Server**
-- **MySQL**: Robust relational database for data persistence
+**iOS Client** 🚧 **Planned**
+- **Core Data**: Local persistence and caching (architecture ready)
+- **VisionKit**: Advanced computer vision for book scanning (UI ready)
+- **Combine**: Reactive programming for advanced features
+
+**Backend Server** 🚧 **In Development**
+- **MySQL**: Robust relational database for data persistence (schema designed)
 - **RESTful API**: Clean HTTP endpoints for client communication
 - **Authentication**: Secure user authentication and session management
 - **External APIs**: Google Books & Open Library integration
@@ -491,94 +482,123 @@ graph TD
 
 ## Current App State
 
-### 🏗️ **Foundation Complete** ✅
-The app currently shows:
-- **Loading Screen**: Dark theme with Stacks logo and progress indicator
-- **Authentication Flow**: Placeholder login/signup screens (ready for API integration)
-- **Tab Navigation**: 5-tab structure (Home, Discover, Scan, Library, Profile)
-- **Placeholder Views**: All major screens with "To be implemented" labels
-- **Badge System**: Popup animations for earned achievements
-- **Data Models**: Complete Core Data persistence layer ready for API integration
+### ✅ **iOS App - Complete** 
+The SwiftUI iOS frontend is fully implemented and ready to use:
 
-### ⚠️ **CRITICAL REQUIREMENTS NEEDED**
+#### **Implemented Features**
+- ✅ **Authentication Flow**: Complete onboarding, login, and signup screens
+- ✅ **Main Navigation**: 5-tab structure (Home, Explore, Scan, Library, Profile) with sidebar
+- ✅ **Home Screen**: Welcome dashboard with reading stats, currently reading, and activity feed
+- ✅ **Library Management**: Book collection view with filtering by reading status
+- ✅ **Book Details**: Comprehensive book information page with reviews
+- ✅ **Review System**: Write and view book reviews with ratings
+- ✅ **Explore/Discover**: Search functionality and genre browsing
+- ✅ **Scan Interface**: Camera interface placeholder and manual ISBN entry
+- ✅ **Profile**: User profile with stats, badges, goals, and settings
 
-#### 🍎 **Apple Developer Program** - **REQUIRED** 
-**Status**: ❌ **NOT ENROLLED** | **Cost**: $99/year
+#### **Architecture & Code Quality**
+- ✅ **MVVM Architecture**: Clean separation with ViewModels and Services
+- ✅ **Async/Await**: Modern Swift concurrency throughout
+- ✅ **Design System**: Complete dark-mode-first theme with reusable components
+- ✅ **Data Models**: All models based on database schema, ready for API integration
+- ✅ **Mock Services**: Fully functional mock services for development and testing
+- ✅ **Code Organization**: Well-structured, maintainable codebase
 
-**Essential for**:
-- Testing on physical devices (currently Simulator only)
-- App Store distribution and TestFlight beta testing  
-- Push notifications and production environment
-- Proper code signing and entitlements
+#### **What's Working**
+- All UI screens match the design mockups
+- Navigation flows between all screens
+- Mock data for testing all features
+- Authentication state management
+- Book collection management
+- Review creation and display
+- Reading status tracking
 
-👉 **[Enroll at developer.apple.com](https://developer.apple.com/programs/)** before device testing
+### ⚠️ **Next Steps**
 
-#### 🗄️ **Backend API Development** 
-**Status**: ⚠️ **IN PROGRESS**
-- ✅ MySQL database schema designed
+#### 🗄️ **Backend API Development** - **IN PROGRESS**
+**Status**: Schema designed, implementation needed
+- ✅ MySQL database schema designed and documented
 - ❌ Backend API server implementation needed
 - ❌ Authentication endpoints required
 - ❌ Book metadata API integration needed
 
-#### 🔥 **Firebase Configuration** 
-**Status**: ⚠️ **PARTIALLY COMPLETE**
-- ✅ Firebase project created (`intilted-v1`)
-- ❌ May need migration to new backend architecture
-- ❌ iOS App target needed in Xcode
+**To connect the iOS app**:
+1. Implement RESTful API endpoints matching the service interfaces
+2. Replace `MockAuthService`, `MockBookService`, etc. with real implementations
+3. Update API base URL in service configurations
 
-### 🎨 **Design System Ready**
-- **Dark-mode-first** color palette implemented
-- **Typography scale** with comprehensive font definitions
-- **Button styles** and component library
-- **Animation presets** and haptic feedback
-- **Custom shapes** for book spines and shelves
+#### 🍎 **Apple Developer Program** - **OPTIONAL**
+**Status**: Not required for simulator testing
+**Cost**: $99/year
 
-### 📱 **Next: Setup & Implementation**
-**Immediate Steps**:
-1. **🍎 Enroll in Apple Developer Program** ($99/year)
-2. **🗄️ Implement Backend API Server** (MySQL + REST API)
-3. **📱 Create iOS App target** in Xcode with proper bundle ID
-4. **🔗 Connect iOS app to backend API**
+**Needed for**:
+- Testing on physical devices
+- App Store distribution
+- TestFlight beta testing
+- Push notifications
 
-**Then UI Development**:
-5. Replace placeholder views with actual shelf visualizations
-6. Add VisionKit scanner integration
-7. Implement book detail and review interfaces
-8. Connect to backend API for data persistence
+👉 **[Enroll at developer.apple.com](https://developer.apple.com/programs/)** when ready for device testing
 
-📋 **See [DEVELOPMENT-STATUS.md](DEVELOPMENT-STATUS.md) for detailed progress tracking**
+#### 📷 **Camera Integration** - **ENHANCEMENT**
+**Status**: Interface ready, needs VisionKit implementation
+- ✅ Scan screen UI implemented
+- ❌ VisionKit integration for actual barcode/ISBN scanning
+- ❌ Cover image OCR recognition
+
+#### 💾 **Local Persistence** - **ENHANCEMENT**
+**Status**: Architecture ready
+- ✅ Data models support Codable for persistence
+- ❌ Core Data implementation for offline support
+- ❌ Local caching of book metadata
 
 ## Roadmap
 
-### Phase 1: Foundation ✅
+### Phase 1: Foundation ✅ **COMPLETE**
 - [x] Core architecture and data models
-- [x] Authentication infrastructure  
+- [x] Authentication infrastructure (UI + mock services)
 - [x] Design system and theming
-- [x] Badge and achievement system
-- [x] Local persistence with Core Data
+- [x] Badge and achievement system (UI)
+- [x] Complete SwiftUI frontend implementation
+- [x] All screens matching UI mockups
+- [x] Navigation and routing
+- [x] Mock services for development
 
-### Phase 2: Backend & API Integration
+### Phase 2: Backend & API Integration 🚧 **IN PROGRESS**
+- [x] MySQL database schema design
 - [ ] MySQL database implementation
 - [ ] RESTful API server development
 - [ ] Authentication endpoints
-- [ ] Book metadata API integration
+- [ ] Book metadata API integration (Google Books & Open Library)
+- [ ] Connect iOS app to backend API
+- [ ] Replace mock services with real API calls
 
-### Phase 3: Social Features
+### Phase 3: Core Features Enhancement
+- [ ] VisionKit integration for book scanning
+- [ ] Core Data for local persistence
+- [ ] Offline support and caching
+- [ ] Image loading and caching
+- [ ] Reading progress tracking
+- [ ] Shelf management (create, edit, organize)
+
+### Phase 4: Social Features
 - [ ] Friend connections
-- [ ] Review system
 - [ ] Activity feeds
-- [ ] Badge system
+- [ ] Badge system (backend integration)
+- [ ] Notifications
+- [ ] Privacy settings
 
-### Phase 4: Advanced Features
+### Phase 5: Advanced Features
 - [ ] Book recommendations
 - [ ] Reading challenges
 - [ ] Export/import functionality
 - [ ] Advanced analytics
+- [ ] Reading streaks and statistics
 
-### Phase 5: Expansion
+### Phase 6: Expansion
 - [ ] macOS app
 - [ ] Web companion
 - [ ] Third-party integrations
+- [ ] Widget support
 
 ## License
 
