@@ -44,9 +44,13 @@
         .diagram-container {
             position: relative;
             width: 100%;
-            min-width: 1200px;
-            min-height: 3000px;
-            overflow: visible;
+            overflow: hidden;
+            padding: 150px;
+            cursor: grab;
+        }
+
+        .diagram-container.dragging {
+            cursor: grabbing;
         }
 
         .entity-group {
@@ -106,16 +110,19 @@
         .pk {
             border-color: #e53e3e;
             border-width: 2px;
+            background: #fee2e2;
         }
 
         .uk {
             border-color: #3182ce;
             border-width: 2px;
+            background: #dbeafe;
         }
 
         .fk {
             border-color: #38a169;
             border-width: 2px;
+            background: #d1fae5;
         }
 
         .zoom-controls {
@@ -126,6 +133,7 @@
             background: white;
             padding: 10px;
             border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .zoom-controls button {
@@ -140,10 +148,141 @@
         .zoom-controls button:hover {
             background: #edf2f7;
         }
+
+        .legend {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 8px;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 180px;
+            font-size: 0.75em;
+        }
+
+        .legend h3 {
+            margin: 0 0 6px 0;
+            font-size: 0.95em;
+            color: #2d3748;
+        }
+
+        .legend h4 {
+            margin: 6px 0 3px 0;
+            font-size: 0.8em;
+            color: #4a5568;
+        }
+
+        .legend-section {
+            margin-bottom: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 3px 0;
+            font-size: 0.7em;
+        }
+
+        .legend-attribute {
+            width: 35px;
+            height: 18px;
+            border: 1.5px solid #4a5568;
+            border-radius: 50%;
+            margin-right: 6px;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .legend-attribute.pk {
+            border-color: #e53e3e;
+            background: #fee2e2;
+        }
+
+        .legend-attribute.uk {
+            border-color: #3182ce;
+            background: #dbeafe;
+        }
+
+        .legend-attribute.fk {
+            border-color: #38a169;
+            background: #d1fae5;
+        }
+
+        .legend-line {
+            width: 30px;
+            height: 2px;
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+
+        .legend-diamond {
+            width: 18px;
+            height: 9px;
+            margin-right: 6px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .legend-diamond svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .relationship {
+            position: absolute;
+            z-index: 8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .relationship-svg {
+            position: absolute;
+            z-index: 7;
+            pointer-events: none;
+        }
+
+        .relationship-text {
+            position: relative;
+            z-index: 9;
+            font-weight: bold;
+            font-size: 0.7em;
+            color: #2d3748;
+            text-align: center;
+            padding: 4px;
+            max-width: 100px;
+            word-wrap: break-word;
+            line-height: 1.2;
+            pointer-events: none;
+        }
+
+        .relationship-line {
+            position: absolute;
+            background-color: #4a5568;
+            z-index: 6;
+            pointer-events: none;
+            border: none;
+        }
+
+        .cardinality {
+            position: absolute;
+            background: white;
+            padding: 3px 8px;
+            font-weight: bold;
+            font-size: 1em;
+            color: #2d3748;
+            z-index: 10;
+            border: 2px solid #2d3748;
+            border-radius: 4px;
+            min-width: 20px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+        <div class="container">
         <h1>Stacks Database ER Diagram</h1>
         <p class="subtitle">Chen Entity-Relationship Diagram - 18 Entities with Attributes</p>
         
@@ -153,11 +292,60 @@
             <button onclick="resetZoom()">Reset</button>
         </div>
         
+        <div class="legend">
+            <h3>Legend</h3>
+            <div class="legend-section">
+                <h4>Attributes</h4>
+                <div class="legend-item">
+                    <div class="legend-attribute pk"></div>
+                    <span>Primary Key (PK)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-attribute uk"></div>
+                    <span>Unique Key (UK)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-attribute fk"></div>
+                    <span>Foreign Key (FK)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-attribute"></div>
+                    <span>Regular Attribute</span>
+                </div>
+            </div>
+            <div class="legend-section">
+                <h4>Relationships</h4>
+                <div class="legend-item">
+                    <div class="legend-line" style="background-color: #e53e3e;"></div>
+                    <span>Lines (Color-coded)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-diamond">
+                        <svg viewBox="0 0 90 45">
+                            <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <span>Relationship</span>
+                </div>
+            </div>
+            <div class="legend-section">
+                <h4>Controls</h4>
+                <div class="legend-item">
+                    <span>Click & Hold: Pan</span>
+                </div>
+                <div class="legend-item">
+                    <span>Pinch: Zoom</span>
+                </div>
+                <div class="legend-item">
+                    <span>Ctrl+Scroll: Zoom</span>
+                </div>
+            </div>
+        </div>
+        
         <div class="diagram-container" id="diagram">
-            <svg id="lines" style="position: absolute; top: 0; left: 0; width: 100%; height: 3000px; pointer-events: none; z-index: 1;"></svg>
             
-            <!-- USERS Entity -->
-            <div class="entity-group" style="left: 30px; top: 30px;">
+            <!-- USERS Entity - CENTER (connects to many things) -->
+            <div class="entity-group" style="left: 2400px; top: 2200px;">
                 <div class="entity" id="entity-users" style="left: 0; top: 0;">
                     <div class="entity-name">Users</div>
                 </div>
@@ -203,7 +391,7 @@
             </div>
 
             <!-- BOOKS Entity -->
-            <div class="entity-group" style="left: 450px; top: 30px;">
+            <div class="entity-group" style="left: 1400px; top: 2200px;">
                 <div class="entity" id="entity-books" style="left: 0; top: 0;">
                     <div class="entity-name">Books</div>
                 </div>
@@ -252,7 +440,7 @@
             </div>
 
             <!-- AUTHORS Entity -->
-            <div class="entity-group" style="left: 870px; top: 30px;">
+            <div class="entity-group" style="left: 800px; top: 2200px;">
                 <div class="entity" id="entity-authors" style="left: 0; top: 0;">
                     <div class="entity-name">Authors</div>
                 </div>
@@ -283,7 +471,7 @@
             </div>
 
             <!-- GENRES Entity -->
-            <div class="entity-group" style="left: 30px; top: 500px;">
+            <div class="entity-group" style="left: 600px; top: 3000px;">
                 <div class="entity" id="entity-genres" style="left: 0; top: 0;">
                     <div class="entity-name">Genres</div>
                 </div>
@@ -302,7 +490,7 @@
             </div>
 
             <!-- USER_BOOKS Entity -->
-            <div class="entity-group" style="left: 450px; top: 500px;">
+            <div class="entity-group" style="left: 1900px; top: 1600px;">
                 <div class="entity" id="entity-user_books" style="left: 0; top: 0;">
                     <div class="entity-name">User_Books</div>
                 </div>
@@ -351,7 +539,7 @@
             </div>
 
             <!-- READING_SESSIONS Entity -->
-            <div class="entity-group" style="left: 870px; top: 500px;">
+            <div class="entity-group" style="left: 2900px; top: 1600px;">
                 <div class="entity" id="entity-reading_sessions" style="left: 0; top: 0;">
                     <div class="entity-name">Reading_Sessions</div>
                 </div>
@@ -382,7 +570,7 @@
             </div>
 
             <!-- READING_HISTORY Entity -->
-            <div class="entity-group" style="left: 30px; top: 970px;">
+            <div class="entity-group" style="left: 2400px; top: 3000px;">
                 <div class="entity" id="entity-reading_history" style="left: 0; top: 0;">
                     <div class="entity-name">Reading_History</div>
                 </div>
@@ -413,7 +601,7 @@
             </div>
 
             <!-- SHELVES Entity -->
-            <div class="entity-group" style="left: 450px; top: 970px;">
+            <div class="entity-group" style="left: 3400px; top: 2200px;">
                 <div class="entity" id="entity-shelves" style="left: 0; top: 0;">
                     <div class="entity-name">Shelves</div>
                 </div>
@@ -447,7 +635,7 @@
             </div>
 
             <!-- SHELF_BOOKS Entity -->
-            <div class="entity-group" style="left: 870px; top: 970px;">
+            <div class="entity-group" style="left: 2900px; top: 2800px;">
                 <div class="entity" id="entity-shelf_books" style="left: 0; top: 0;">
                     <div class="entity-name">Shelf_Books</div>
                 </div>
@@ -475,7 +663,7 @@
             </div>
 
             <!-- REVIEWS Entity -->
-            <div class="entity-group" style="left: 30px; top: 1440px;">
+            <div class="entity-group" style="left: 1900px; top: 2800px;">
                 <div class="entity" id="entity-reviews" style="left: 0; top: 0;">
                     <div class="entity-name">Reviews</div>
                 </div>
@@ -512,7 +700,7 @@
             </div>
 
             <!-- FRIENDS Entity -->
-            <div class="entity-group" style="left: 450px; top: 1440px;">
+            <div class="entity-group" style="left: 4000px; top: 1600px;">
                 <div class="entity" id="entity-friends" style="left: 0; top: 0;">
                     <div class="entity-name">Friends</div>
                 </div>
@@ -540,7 +728,7 @@
             </div>
 
             <!-- FRIEND_REQUESTS Entity -->
-            <div class="entity-group" style="left: 870px; top: 1440px;">
+            <div class="entity-group" style="left: 4000px; top: 2800px;">
                 <div class="entity" id="entity-friend_requests" style="left: 0; top: 0;">
                     <div class="entity-name">Friend_Requests</div>
                 </div>
@@ -565,7 +753,7 @@
             </div>
 
             <!-- ACTIVITIES Entity -->
-            <div class="entity-group" style="left: 30px; top: 1910px;">
+            <div class="entity-group" style="left: 2400px; top: 1400px;">
                 <div class="entity" id="entity-activities" style="left: 0; top: 0;">
                     <div class="entity-name">Activities</div>
                 </div>
@@ -599,7 +787,7 @@
             </div>
 
             <!-- BADGES Entity -->
-            <div class="entity-group" style="left: 450px; top: 1910px;">
+            <div class="entity-group" style="left: 600px; top: 1400px;">
                 <div class="entity" id="entity-badges" style="left: 0; top: 0;">
                     <div class="entity-name">Badges</div>
                 </div>
@@ -633,7 +821,7 @@
             </div>
 
             <!-- USER_BADGES Entity -->
-            <div class="entity-group" style="left: 870px; top: 1910px;">
+            <div class="entity-group" style="left: 1900px; top: 1000px;">
                 <div class="entity" id="entity-user_badges" style="left: 0; top: 0;">
                     <div class="entity-name">User_Badges</div>
                 </div>
@@ -661,7 +849,7 @@
             </div>
 
             <!-- BOOK_AUTHORS Entity -->
-            <div class="entity-group" style="left: 30px; top: 2380px;">
+            <div class="entity-group" style="left: 1100px; top: 1600px;">
                 <div class="entity" id="entity-book_authors" style="left: 0; top: 0;">
                     <div class="entity-name">Book_Authors</div>
                 </div>
@@ -686,7 +874,7 @@
             </div>
 
             <!-- BOOK_GENRES Entity -->
-            <div class="entity-group" style="left: 450px; top: 2380px;">
+            <div class="entity-group" style="left: 1100px; top: 3000px;">
                 <div class="entity" id="entity-book_genres" style="left: 0; top: 0;">
                     <div class="entity-name">Book_Genres</div>
                 </div>
@@ -708,7 +896,7 @@
             </div>
 
             <!-- NOTIFICATIONS Entity -->
-            <div class="entity-group" style="left: 870px; top: 2380px;">
+            <div class="entity-group" style="left: 3400px; top: 1600px;">
                 <div class="entity" id="entity-notifications" style="left: 0; top: 0;">
                     <div class="entity-name">Notifications</div>
                 </div>
@@ -740,16 +928,27 @@
                     <div class="attribute-text"><span class="attribute-key">datetime</span><br>read_at</div>
                 </div>
             </div>
+
+            <!-- Relationships Container -->
+            <div id="relationships-container"></div>
         </div>
     </div>
 
     <script>
-        let currentZoom = 1;
+        let currentZoom = 0.5; // Default to 50% zoom for more zoomed out view
         const zoomStep = 0.1;
+        const panSpeed = 1.5; // Speed multiplier for panning (higher = faster)
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+        let scrollPosition = { x: 0, y: 0 };
+        let initialPinchDistance = 0;
+        let initialZoomOnPinch = 0.5;
+
+        const container = document.querySelector('.diagram-container');
+        const diagram = document.getElementById('diagram');
 
         function updateZoom() {
-            const diagram = document.getElementById('diagram');
-            diagram.style.transform = `scale(${currentZoom})`;
+            diagram.style.transform = `scale(${currentZoom}) translate(${scrollPosition.x}px, ${scrollPosition.y}px)`;
             diagram.style.transformOrigin = 'top left';
         }
 
@@ -764,14 +963,147 @@
         }
 
         function resetZoom() {
-            currentZoom = 1;
-            updateZoom();
+            // Reset to fit view
+            fitViewToContent();
         }
 
-        // Center each entity rectangle relative to its attributes
-        function centerEntities() {
-            const entityGroups = document.querySelectorAll('.entity-group');
+        // Click and hold scrolling (panning)
+        container.addEventListener('mousedown', (e) => {
+            if (e.button === 0) { // Left mouse button
+                isDragging = true;
+                container.classList.add('dragging');
+                dragStart.x = e.clientX - scrollPosition.x / (currentZoom * panSpeed);
+                dragStart.y = e.clientY - scrollPosition.y / (currentZoom * panSpeed);
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                scrollPosition.x = (e.clientX - dragStart.x) * currentZoom * panSpeed;
+                scrollPosition.y = (e.clientY - dragStart.y) * currentZoom * panSpeed;
+                updateZoom();
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                container.classList.remove('dragging');
+            }
+        });
+
+        // Ctrl+Scroll zoom (slower for trackpad)
+        container.addEventListener('wheel', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                // Use a much smaller step for trackpad - proportional to scroll delta
+                const trackpadZoomStep = 0.02; // Much smaller step for smoother trackpad zooming
+                const delta = e.deltaY > 0 ? -trackpadZoomStep : trackpadZoomStep;
+                currentZoom = Math.max(0.5, Math.min(2, currentZoom + delta));
+                updateZoom();
+            }
+        }, { passive: false });
+
+        // Pinch zoom (touch)
+        let touches = [];
+        container.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                touches = Array.from(e.touches);
+                initialPinchDistance = getDistance(touches[0], touches[1]);
+                initialZoomOnPinch = currentZoom;
+                e.preventDefault();
+            } else if (e.touches.length === 1) {
+                isDragging = true;
+                dragStart.x = e.touches[0].clientX - scrollPosition.x / (currentZoom * panSpeed);
+                dragStart.y = e.touches[0].clientY - scrollPosition.y / (currentZoom * panSpeed);
+            }
+        }, { passive: false });
+
+        container.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2) {
+                const newTouches = Array.from(e.touches);
+                const newDistance = getDistance(newTouches[0], newTouches[1]);
+                const scale = newDistance / initialPinchDistance;
+                currentZoom = Math.max(0.5, Math.min(2, initialZoomOnPinch * scale));
+                updateZoom();
+                e.preventDefault();
+            } else if (e.touches.length === 1 && isDragging) {
+                scrollPosition.x = (e.touches[0].clientX - dragStart.x) * currentZoom * panSpeed;
+                scrollPosition.y = (e.touches[0].clientY - dragStart.y) * currentZoom * panSpeed;
+                updateZoom();
+            }
+        }, { passive: false });
+
+        container.addEventListener('touchend', () => {
+            isDragging = false;
+            touches = [];
+        });
+
+        function getDistance(touch1, touch2) {
+            const dx = touch1.clientX - touch2.clientX;
+            const dy = touch1.clientY - touch2.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+        
+        // Initialize zoom on load
+        window.addEventListener('DOMContentLoaded', () => {
+            updateZoom();
+        });
+
+        // Calculate bounding box of an entity group (entity + all attributes)
+        function getEntityGroupBounds(group) {
+            const entity = group.querySelector('.entity');
+            if (!entity) return null;
             
+            const entityId = entity.id.replace('entity-', '');
+            const attributes = group.querySelectorAll(`.attribute[data-entity="${entityId}"]`);
+            
+            let minX = Infinity, maxX = -Infinity;
+            let minY = Infinity, maxY = -Infinity;
+            
+            // Check entity
+            const entityLeft = parseFloat(entity.style.left) || 0;
+            const entityTop = parseFloat(entity.style.top) || 0;
+            const entityRect = entity.getBoundingClientRect();
+            const entityWidth = entityRect.width || 120;
+            const entityHeight = entityRect.height || 50;
+            
+            minX = Math.min(minX, entityLeft);
+            maxX = Math.max(maxX, entityLeft + entityWidth);
+            minY = Math.min(minY, entityTop);
+            maxY = Math.max(maxY, entityTop + entityHeight);
+            
+            // Check all attributes
+            attributes.forEach(attr => {
+                const attrLeft = parseFloat(attr.style.left) || 0;
+                const attrTop = parseFloat(attr.style.top) || 0;
+                const attrWidth = 100;
+                const attrHeight = 50;
+                
+                minX = Math.min(minX, attrLeft);
+                maxX = Math.max(maxX, attrLeft + attrWidth);
+                minY = Math.min(minY, attrTop);
+                maxY = Math.max(maxY, attrTop + attrHeight);
+            });
+            
+            return {
+                width: maxX - minX,
+                height: maxY - minY,
+                centerX: (minX + maxX) / 2,
+                centerY: (minY + maxY) / 2,
+                minX: minX,
+                minY: minY
+            };
+        }
+        
+        // Automatic layout: Arrange entity groups in a grid with proper spacing
+        function layoutEntityGroups() {
+            const entityGroups = Array.from(document.querySelectorAll('.entity-group'));
+            const containerPadding = 200;
+            const spacing = 400; // Space between entity groups
+            
+            // First, center entities within their attribute clusters
             entityGroups.forEach(group => {
                 const entity = group.querySelector('.entity');
                 if (!entity) return;
@@ -790,8 +1122,8 @@
                 attributes.forEach(attr => {
                     const left = parseFloat(attr.style.left) || 0;
                     const top = parseFloat(attr.style.top) || 0;
-                    const width = 100; // attribute width
-                    const height = 50; // attribute height
+                    const width = 100;
+                    const height = 50;
                     
                     minLeft = Math.min(minLeft, left);
                     maxLeft = Math.max(maxLeft, left + width);
@@ -799,16 +1131,7 @@
                     maxTop = Math.max(maxTop, top + height);
                 });
                 
-                // Ensure attributes don't go off-page
-                const entityGroupRect = group.getBoundingClientRect();
-                const groupLeft = parseFloat(group.style.left) || 0;
-                if (minLeft + groupLeft < 0) {
-                    // Shift entire group right if attributes would go off left edge
-                    const shift = Math.abs(minLeft + groupLeft) + 10;
-                    group.style.left = (groupLeft + shift) + 'px';
-                }
-                
-                // Calculate center of attributes
+                // Calculate center of attributes bounding box
                 const centerX = (minLeft + maxLeft) / 2;
                 const centerY = (minTop + maxTop) / 2;
                 
@@ -817,79 +1140,527 @@
                 const entityWidth = entityRect.width || 120;
                 const entityHeight = entityRect.height || 50;
                 
-                // Ensure entity doesn't overlap with attributes
-                // Attributes are at -110px (left) and 130px (right), so entity should be at least 50px wide
-                // Position entity at center, accounting for its own dimensions
+                // Position entity at the center of the attribute cluster
                 const entityLeft = centerX - entityWidth / 2;
                 const entityTop = centerY - entityHeight / 2;
                 
-                // Check if entity would overlap with leftmost attribute
-                const leftmostAttrX = minLeft;
-                const rightmostAttrX = maxLeft;
-                const entityRight = entityLeft + entityWidth;
-                
-                // Adjust if entity would overlap with attributes
-                if (entityLeft < rightmostAttrX && entityLeft > leftmostAttrX) {
-                    // Entity is between attributes, center it
-                    entity.style.left = (centerX - entityWidth / 2) + 'px';
-                } else {
-                    entity.style.left = entityLeft + 'px';
-                }
+                entity.style.left = entityLeft + 'px';
                 entity.style.top = entityTop + 'px';
+            });
+            
+            // Calculate bounds for each group
+            const groupBounds = entityGroups.map(group => {
+                const bounds = getEntityGroupBounds(group);
+                return { group, bounds };
+            }).filter(item => item.bounds !== null);
+            
+            // Arrange in a grid: 4 columns, ~5 rows
+            const cols = 4;
+            const rows = Math.ceil(groupBounds.length / cols);
+            
+            groupBounds.forEach((item, index) => {
+                const { group, bounds } = item;
+                const col = index % cols;
+                const row = Math.floor(index / cols);
+                
+                // Calculate position: account for group's internal offset
+                const targetX = containerPadding + col * spacing;
+                const targetY = containerPadding + row * spacing;
+                
+                // Adjust group position so its content is at target position
+                // We need to offset by the group's internal minX/minY
+                const groupLeft = targetX - bounds.minX;
+                const groupTop = targetY - bounds.minY;
+                
+                group.style.left = groupLeft + 'px';
+                group.style.top = groupTop + 'px';
+            });
+            
+            // Update container size
+            updateContainerSize();
+        }
+        
+        // Legacy function name for compatibility
+        function centerEntities() {
+            layoutEntityGroups();
+        }
+        
+        // Update container size to fit all content
+        function updateContainerSize() {
+            const container = document.querySelector('.diagram-container');
+            const entityGroups = document.querySelectorAll('.entity-group');
+            const containerPadding = 100;
+            
+            let minLeft = Infinity;
+            let maxRight = 0;
+            let maxBottom = 0;
+            
+            entityGroups.forEach(group => {
+                const groupLeft = parseFloat(group.style.left) || 0;
+                const groupTop = parseFloat(group.style.top) || 0;
+                
+                // Find all attributes in this group
+                const entity = group.querySelector('.entity');
+                if (entity) {
+                    const entityId = entity.id.replace('entity-', '');
+                    const attributes = group.querySelectorAll(`.attribute[data-entity="${entityId}"]`);
+                    
+                    attributes.forEach(attr => {
+                        const attrLeft = parseFloat(attr.style.left) || 0;
+                        const attrTop = parseFloat(attr.style.top) || 0;
+                        const attrWidth = 100;
+                        const attrHeight = 50;
+                        
+                        const absoluteLeft = groupLeft + attrLeft;
+                        const absoluteRight = groupLeft + attrLeft + attrWidth;
+                        const absoluteBottom = groupTop + attrTop + attrHeight;
+                        
+                        minLeft = Math.min(minLeft, absoluteLeft);
+                        maxRight = Math.max(maxRight, absoluteRight);
+                        maxBottom = Math.max(maxBottom, absoluteBottom);
+                    });
+                }
+                
+                // Also check entity bounds
+                const groupRect = group.getBoundingClientRect();
+                const right = groupLeft + groupRect.width;
+                const bottom = groupTop + groupRect.height;
+                
+                maxRight = Math.max(maxRight, right);
+                maxBottom = Math.max(maxBottom, bottom);
+            });
+            
+            // Also check relationship bounds
+            const relationships = document.querySelectorAll('.relationship-svg');
+            relationships.forEach(rel => {
+                const relStyle = window.getComputedStyle(rel);
+                const relLeft = parseFloat(relStyle.left) || 0;
+                const relTop = parseFloat(relStyle.top) || 0;
+                const relWidth = parseFloat(rel.getAttribute('width')) || 0;
+                const relHeight = parseFloat(rel.getAttribute('height')) || 0;
+                
+                minLeft = Math.min(minLeft, relLeft);
+                maxRight = Math.max(maxRight, relLeft + relWidth);
+                maxBottom = Math.max(maxBottom, relTop + relHeight);
+            });
+            
+            // Check relationship lines bounds (approximate)
+            const lines = document.querySelectorAll('.relationship-line');
+            lines.forEach(line => {
+                const lineStyle = window.getComputedStyle(line);
+                const lineLeft = parseFloat(lineStyle.left) || 0;
+                const lineTop = parseFloat(lineStyle.top) || 0;
+                const lineWidth = parseFloat(lineStyle.width) || 0;
+                
+                minLeft = Math.min(minLeft, lineLeft);
+                maxRight = Math.max(maxRight, lineLeft + lineWidth);
+                maxBottom = Math.max(maxBottom, lineTop);
+            });
+            
+            // Ensure minimum left position is at least the padding
+            if (minLeft < containerPadding) {
+                minLeft = containerPadding;
+            }
+            
+            // Set container dimensions with padding - only use actual content bounds
+            // Don't set minimums - use actual content size
+            const containerWidth = maxRight - minLeft + containerPadding * 2;
+            const containerHeight = maxBottom + containerPadding;
+            
+            // Only set if we have valid bounds
+            if (containerWidth > 0 && containerHeight > 0 && isFinite(containerWidth) && isFinite(containerHeight)) {
+                container.style.minWidth = containerWidth + 'px';
+                container.style.minHeight = containerHeight + 'px';
+            }
+            
+        }
+
+        // Helper function to find intersection point of line with rectangle edge
+        function getEdgeIntersection(rect, targetX, targetY) {
+            const containerRect = document.querySelector('.diagram-container').getBoundingClientRect();
+            const rectX = rect.left - containerRect.left;
+            const rectY = rect.top - containerRect.top;
+            const rectW = rect.width;
+            const rectH = rect.height;
+            const rectCenterX = rectX + rectW / 2;
+            const rectCenterY = rectY + rectH / 2;
+            
+            // Calculate direction from center to target
+            const dx = targetX - rectCenterX;
+            const dy = targetY - rectCenterY;
+            
+            // Calculate intersection with rectangle edge
+            const ratioX = Math.abs(dx) > 0 ? (rectW / 2) / Math.abs(dx) : Infinity;
+            const ratioY = Math.abs(dy) > 0 ? (rectH / 2) / Math.abs(dy) : Infinity;
+            const ratio = Math.min(ratioX, ratioY);
+            
+            return {
+                x: rectCenterX + dx * ratio,
+                y: rectCenterY + dy * ratio
+            };
+        }
+
+        // Helper function to find intersection point of line with diamond edge
+        function getDiamondEdgeIntersection(relX, relY, relWidth, relHeight, targetX, targetY) {
+            // relX, relY, targetX, targetY are already in container coordinates
+            const relLeft = relX - relWidth / 2;
+            const relTop = relY - relHeight / 2;
+            
+            // Diamond points: top, right, bottom, left (in container coordinates)
+            const top = { x: relX, y: relTop };
+            const right = { x: relX + relWidth / 2, y: relY };
+            const bottom = { x: relX, y: relTop + relHeight };
+            const left = { x: relX - relWidth / 2, y: relY };
+            
+            // Calculate direction from center to target
+            const dx = targetX - relX;
+            const dy = targetY - relY;
+            const angle = Math.atan2(dy, dx);
+            
+            // Determine which edge of the diamond the line intersects
+            // Diamond edges: top-right, right-bottom, bottom-left, left-top
+            let edgeStart, edgeEnd;
+            
+            if (angle >= -Math.PI / 2 && angle < 0) {
+                // Top-right edge
+                edgeStart = top;
+                edgeEnd = right;
+            } else if (angle >= 0 && angle < Math.PI / 2) {
+                // Right-bottom edge
+                edgeStart = right;
+                edgeEnd = bottom;
+            } else if (angle >= Math.PI / 2 && angle < Math.PI) {
+                // Bottom-left edge
+                edgeStart = bottom;
+                edgeEnd = left;
+            } else {
+                // Left-top edge
+                edgeStart = left;
+                edgeEnd = top;
+            }
+            
+            // Find intersection of line from center to target with the edge
+            const edgeDx = edgeEnd.x - edgeStart.x;
+            const edgeDy = edgeEnd.y - edgeStart.y;
+            
+            // Line from center: (relX, relY) + t * (dx, dy)
+            // Edge: (edgeStart.x, edgeStart.y) + s * (edgeDx, edgeDy)
+            // Solve for intersection
+            const denom = dx * edgeDy - dy * edgeDx;
+            if (Math.abs(denom) < 0.001) {
+                // Parallel lines, use edge midpoint
+                return {
+                    x: (edgeStart.x + edgeEnd.x) / 2,
+                    y: (edgeStart.y + edgeEnd.y) / 2
+                };
+            }
+            
+            const t = ((edgeStart.x - relX) * edgeDy - (edgeStart.y - relY) * edgeDx) / denom;
+            const s = ((edgeStart.x - relX) * dy - (edgeStart.y - relY) * dx) / denom;
+            
+            // Clamp s to [0, 1] to stay on edge
+            const clampedS = Math.max(0, Math.min(1, s));
+            
+            return {
+                x: edgeStart.x + clampedS * edgeDx,
+                y: edgeStart.y + clampedS * edgeDy
+            };
+        }
+
+        // Draw relationship lines with cardinality
+        function drawRelationships() {
+            const container = document.querySelector('.diagram-container');
+            const relContainer = document.getElementById('relationships-container');
+            if (!relContainer) return;
+            
+            // Clear existing relationships
+            relContainer.innerHTML = '';
+            
+            // Color palette for different relationship types
+            const colors = [
+                '#e53e3e', '#3182ce', '#38a169', '#d69e2e', '#805ad5',
+                '#dd6b20', '#319795', '#c53030', '#2c5282', '#276749'
+            ];
+            
+            const relationships = [
+                // Format: [entity1, entity2, relationshipName, card1, card2, colorIndex]
+                ['users', 'user_books', 'has', '1', 'M', 0],
+                ['users', 'shelves', 'creates', '1', 'M', 1],
+                ['users', 'reviews', 'writes', '1', 'M', 2],
+                ['users', 'user_badges', 'earns', '1', 'M', 3],
+                ['users', 'reading_history', 'has', '1', 'M', 4],
+                ['users', 'activities', 'generates', '1', 'M', 5],
+                ['users', 'notifications', 'receives', '1', 'M', 6],
+                ['books', 'user_books', 'included in', '1', 'M', 0],
+                ['books', 'reviews', 'reviewed in', '1', 'M', 2],
+                ['books', 'shelf_books', 'placed on', '1', 'M', 7],
+                ['books', 'book_authors', 'written by', '1', 'M', 8],
+                ['books', 'book_genres', 'categorized as', '1', 'M', 9],
+                ['authors', 'book_authors', 'writes', '1', 'M', 8],
+                ['genres', 'book_genres', 'categorizes', '1', 'M', 9],
+                ['shelves', 'shelf_books', 'contains', '1', 'M', 7],
+                ['user_books', 'reading_sessions', 'has', '1', 'M', 4],
+                ['badges', 'user_badges', 'earned as', '1', 'M', 3],
+                ['users', 'friends', 'user1', '1', 'M', 1],
+                ['users', 'friends', 'user2', '1', 'M', 1],
+                ['users', 'friend_requests', 'sends', '1', 'M', 6],
+                ['users', 'friend_requests', 'receives', '1', 'M', 6]
+            ];
+
+            // Remove existing relationship lines
+            const existingLines = document.querySelectorAll('.relationship-line');
+            existingLines.forEach(line => line.remove());
+
+            // Track relationship positions to avoid overlaps
+            const relPositions = new Map();
+            
+            relationships.forEach((rel, index) => {
+                const [entity1Id, entity2Id, relName, card1, card2, colorIdx] = rel;
+                
+                const entity1 = document.getElementById(`entity-${entity1Id}`);
+                const entity2 = document.getElementById(`entity-${entity2Id}`);
+                
+                if (!entity1 || !entity2) return;
+
+                // Get entity positions and dimensions
+                const containerRect = container.getBoundingClientRect();
+                const entity1Rect = entity1.getBoundingClientRect();
+                const entity2Rect = entity2.getBoundingClientRect();
+
+                const entity1CenterX = entity1Rect.left - containerRect.left + entity1Rect.width / 2;
+                const entity1CenterY = entity1Rect.top - containerRect.top + entity1Rect.height / 2;
+
+                const entity2CenterX = entity2Rect.left - containerRect.left + entity2Rect.width / 2;
+                const entity2CenterY = entity2Rect.top - containerRect.top + entity2Rect.height / 2;
+
+                // Calculate relationship diamond position (midpoint between centers)
+                let relX = (entity1CenterX + entity2CenterX) / 2;
+                let relY = (entity1CenterY + entity2CenterY) / 2;
+                
+                // Check for duplicate relationships and offset them
+                const relKey = `${entity1Id}-${entity2Id}`;
+                if (relPositions.has(relKey)) {
+                    const existing = relPositions.get(relKey);
+                    existing.count++;
+                    // Offset perpendicular to the line
+                    const dx = entity2CenterX - entity1CenterX;
+                    const dy = entity2CenterY - entity1CenterY;
+                    const angle = Math.atan2(dy, dx);
+                    const perpAngle = angle + Math.PI / 2;
+                    relX += Math.cos(perpAngle) * (existing.count - 1) * 60;
+                    relY += Math.sin(perpAngle) * (existing.count - 1) * 60;
+                } else {
+                    relPositions.set(relKey, { count: 1 });
+                }
+
+                // Get color for this relationship
+                const lineColor = colors[colorIdx % colors.length];
+                
+                // Create relationship diamond using SVG polygon (smaller, wider horizontally)
+                // Diamond dimensions: 90px wide, 45px tall
+                const relWidth = 90;
+                const relHeight = 45;
+                const relLeft = relX - relWidth / 2;
+                const relTop = relY - relHeight / 2;
+                
+                // Create SVG for diamond shape
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('class', 'relationship-svg');
+                svg.setAttribute('width', relWidth);
+                svg.setAttribute('height', relHeight);
+                svg.style.left = relLeft + 'px';
+                svg.style.top = relTop + 'px';
+                
+                // Create diamond polygon: wider horizontally, color-coded
+                const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                const points = [
+                    [relWidth / 2, 0],           // Top point
+                    [relWidth, relHeight / 2],   // Right point
+                    [relWidth / 2, relHeight],   // Bottom point
+                    [0, relHeight / 2]           // Left point
+                ].map(p => p.join(',')).join(' ');
+                polygon.setAttribute('points', points);
+                polygon.setAttribute('fill', 'white');
+                polygon.setAttribute('stroke', lineColor);
+                polygon.setAttribute('stroke-width', '2');
+                svg.appendChild(polygon);
+                relContainer.appendChild(svg);
+                
+                // Create text container
+                const relationship = document.createElement('div');
+                relationship.className = 'relationship';
+                relationship.style.left = relLeft + 'px';
+                relationship.style.top = relTop + 'px';
+                relationship.style.width = relWidth + 'px';
+                relationship.style.height = relHeight + 'px';
+                relationship.innerHTML = `<div class="relationship-text">${relName}</div>`;
+                relContainer.appendChild(relationship);
+                
+                // Find edge intersection points - ensure entities exist and are visible
+                if (!entity1Rect || !entity2Rect || entity1Rect.width === 0 || entity2Rect.width === 0) {
+                    console.warn(`Skipping relationship ${relName}: entities not properly positioned`);
+                    return;
+                }
+                
+                const entity1Edge = getEdgeIntersection(entity1Rect, relX, relY);
+                const entity2Edge = getEdgeIntersection(entity2Rect, relX, relY);
+                const relEdge1 = getDiamondEdgeIntersection(relX, relY, relWidth, relHeight, entity1CenterX, entity1CenterY);
+                const relEdge2 = getDiamondEdgeIntersection(relX, relY, relWidth, relHeight, entity2CenterX, entity2CenterY);
+
+                // Create cardinality labels
+                const card1El = document.createElement('div');
+                card1El.className = 'cardinality';
+                card1El.textContent = card1;
+                card1El.style.borderColor = lineColor;
+                card1El.style.color = lineColor;
+                relContainer.appendChild(card1El);
+
+                const card2El = document.createElement('div');
+                card2El.className = 'cardinality';
+                card2El.textContent = card2;
+                card2El.style.borderColor = lineColor;
+                card2El.style.color = lineColor;
+                relContainer.appendChild(card2El);
+
+                // Draw line from entity1 edge to relationship edge
+                const line1 = document.createElement('div');
+                line1.className = 'relationship-line';
+                const dist1 = Math.sqrt(Math.pow(relEdge1.x - entity1Edge.x, 2) + Math.pow(relEdge1.y - entity1Edge.y, 2));
+                const angle1 = Math.atan2(relEdge1.y - entity1Edge.y, relEdge1.x - entity1Edge.x) * 180 / Math.PI;
+                line1.style.width = dist1 + 'px';
+                line1.style.height = '2px';
+                line1.style.left = entity1Edge.x + 'px';
+                line1.style.top = entity1Edge.y + 'px';
+                line1.style.transformOrigin = '0 50%';
+                line1.style.transform = `rotate(${angle1}deg)`;
+                line1.style.backgroundColor = lineColor;
+                container.appendChild(line1);
+
+                // Draw line from relationship edge to entity2 edge
+                const line2 = document.createElement('div');
+                line2.className = 'relationship-line';
+                const dist2 = Math.sqrt(Math.pow(entity2Edge.x - relEdge2.x, 2) + Math.pow(entity2Edge.y - relEdge2.y, 2));
+                const angle2 = Math.atan2(entity2Edge.y - relEdge2.y, entity2Edge.x - relEdge2.x) * 180 / Math.PI;
+                line2.style.width = dist2 + 'px';
+                line2.style.height = '2px';
+                line2.style.left = relEdge2.x + 'px';
+                line2.style.top = relEdge2.y + 'px';
+                line2.style.transformOrigin = '0 50%';
+                line2.style.transform = `rotate(${angle2}deg)`;
+                line2.style.backgroundColor = lineColor;
+                container.appendChild(line2);
+
+                // Position cardinality labels on lines
+                const card1PosX = entity1Edge.x + (relEdge1.x - entity1Edge.x) * 0.8;
+                const card1PosY = entity1Edge.y + (relEdge1.y - entity1Edge.y) * 0.8;
+                card1El.style.left = (card1PosX - 12) + 'px';
+                card1El.style.top = (card1PosY - 10) + 'px';
+
+                const card2PosX = relEdge2.x + (entity2Edge.x - relEdge2.x) * 0.2;
+                const card2PosY = relEdge2.y + (entity2Edge.y - relEdge2.y) * 0.2;
+                card2El.style.left = (card2PosX - 12) + 'px';
+                card2El.style.top = (card2PosY - 10) + 'px';
             });
         }
 
-        // Draw connecting lines between entities and attributes
-        function drawLines() {
-            const svg = document.getElementById('lines');
-            svg.innerHTML = '';
-            
-            // Update SVG size to cover entire diagram
+        // Fit and center view on entities and attributes only (not relationships)
+        // Relationships are positioned between entities, so they don't need to affect zoom
+        function fitViewToContent() {
             const container = document.querySelector('.diagram-container');
-            const containerRect = container.getBoundingClientRect();
-            const containerHeight = Math.max(container.scrollHeight, containerRect.height, 3000);
-            svg.setAttribute('width', '100%');
-            svg.setAttribute('height', containerHeight + 'px');
-            svg.style.height = containerHeight + 'px';
+            const entityGroups = document.querySelectorAll('.entity-group');
             
-            const attributes = document.querySelectorAll('.attribute');
-            attributes.forEach(attr => {
-                const entityId = attr.getAttribute('data-entity');
-                const entity = document.getElementById(`entity-${entityId}`);
+            if (entityGroups.length === 0) return;
+            
+            // Calculate bounds of entities and attributes ONLY (not relationships)
+            let minX = Infinity, maxX = -Infinity;
+            let minY = Infinity, maxY = -Infinity;
+            
+            entityGroups.forEach(group => {
+                const groupLeft = parseFloat(group.style.left) || 0;
+                const groupTop = parseFloat(group.style.top) || 0;
                 
+                // Check entity
+                const entity = group.querySelector('.entity');
                 if (entity) {
-                    const attrRect = attr.getBoundingClientRect();
+                    const entityLeft = parseFloat(entity.style.left) || 0;
+                    const entityTop = parseFloat(entity.style.top) || 0;
                     const entityRect = entity.getBoundingClientRect();
-                    const containerRect = document.querySelector('.diagram-container').getBoundingClientRect();
+                    const entityWidth = entityRect.width || 120;
+                    const entityHeight = entityRect.height || 50;
                     
-                    const attrX = attrRect.left - containerRect.left + attrRect.width / 2;
-                    const attrY = attrRect.top - containerRect.top + attrRect.height / 2;
-                    const entityX = entityRect.left - containerRect.left + entityRect.width / 2;
-                    const entityY = entityRect.top - containerRect.top + entityRect.height / 2;
-                    
-                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                    line.setAttribute('x1', attrX);
-                    line.setAttribute('y1', attrY);
-                    line.setAttribute('x2', entityX);
-                    line.setAttribute('y2', entityY);
-                    line.setAttribute('stroke', '#4a5568');
-                    line.setAttribute('stroke-width', '1');
-                    svg.appendChild(line);
+                    minX = Math.min(minX, groupLeft + entityLeft);
+                    maxX = Math.max(maxX, groupLeft + entityLeft + entityWidth);
+                    minY = Math.min(minY, groupTop + entityTop);
+                    maxY = Math.max(maxY, groupTop + entityTop + entityHeight);
                 }
+                
+                // Check attributes
+                const attributes = group.querySelectorAll('.attribute');
+                attributes.forEach(attr => {
+                    const attrLeft = parseFloat(attr.style.left) || 0;
+                    const attrTop = parseFloat(attr.style.top) || 0;
+                    const attrWidth = 100;
+                    const attrHeight = 50;
+                    
+                    minX = Math.min(minX, groupLeft + attrLeft);
+                    maxX = Math.max(maxX, groupLeft + attrLeft + attrWidth);
+                    minY = Math.min(minY, groupTop + attrTop);
+                    maxY = Math.max(maxY, groupTop + attrTop + attrHeight);
+                });
             });
+            
+            // DON'T include relationships in bounds - they're positioned between entities
+            // and would cause the view to zoom out too much
+            
+            // If we have valid bounds, fit and center the view
+            if (isFinite(minX) && isFinite(maxX) && isFinite(minY) && isFinite(maxY) && 
+                maxX > minX && maxY > minY) {
+                
+                // Calculate content dimensions
+                const contentWidth = maxX - minX;
+                const contentHeight = maxY - minY;
+                const contentCenterX = (minX + maxX) / 2;
+                const contentCenterY = (minY + maxY) / 2;
+                
+                // Get viewport dimensions
+                const viewportWidth = container.clientWidth;
+                const viewportHeight = container.clientHeight;
+                
+                // Calculate zoom to fit entities/attributes with more padding (more zoomed out)
+                const paddingFactor = 0.7; // Smaller = more zoomed out (was 0.85)
+                const zoomX = (viewportWidth * paddingFactor) / contentWidth;
+                const zoomY = (viewportHeight * paddingFactor) / contentHeight;
+                
+                // Use the smaller zoom to ensure everything fits
+                currentZoom = Math.min(zoomX, zoomY, 2); // Cap at 2x max
+                currentZoom = Math.max(currentZoom, 0.15); // Minimum 0.15x (more zoomed out)
+                
+                // Calculate scroll position to center content in viewport
+                scrollPosition.x = (viewportWidth / 2) - (contentCenterX * currentZoom);
+                scrollPosition.y = (viewportHeight / 2) - (contentCenterY * currentZoom);
+                
+                updateZoom();
+            }
         }
 
         window.addEventListener('load', () => {
-            centerEntities();
+            // First layout the entities properly
+            layoutEntityGroups();
             setTimeout(() => {
-                drawLines();
-            }, 200);
+                // Fit view to entities
+                fitViewToContent();
+                // Relationships removed for now
+                // drawRelationships();
+                updateContainerSize();
+            }, 300);
         });
         window.addEventListener('resize', () => {
-            centerEntities();
+            layoutEntityGroups();
             setTimeout(() => {
-                drawLines();
-            }, 200);
+                // Relationships removed for now
+                // drawRelationships();
+                updateContainerSize();
+            }, 300);
         });
     </script>
 </body>
