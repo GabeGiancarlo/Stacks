@@ -54,14 +54,15 @@
 
         .diagram-container {
             position: fixed;
-            top: 140px;
+            top: 100px;
             left: 0;
             right: 0;
             bottom: 0;
             width: 100%;
-            height: calc(100vh - 140px);
+            height: calc(100vh - 100px);
             overflow: hidden;
-            padding: 10px;
+            padding: 0;
+            margin: 0;
             cursor: grab;
             z-index: 1;
         }
@@ -104,6 +105,20 @@
             align-items: center;
             justify-content: center;
             z-index: 5;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        
+        .attribute:hover {
+            transform: scale(1.05);
+            border-color: #2d3748;
+            z-index: 15;
+        }
+        
+        .attribute.selected {
+            border-color: #3182ce;
+            border-width: 3px;
+            box-shadow: 0 0 10px rgba(49, 130, 206, 0.5);
         }
 
         .attribute-text {
@@ -126,11 +141,20 @@
 
         .attribute-connection-line {
             position: absolute;
-            background-color: #1a202c;
             z-index: 2;
             pointer-events: none;
             opacity: 0.5;
-            height: 1px;
+        }
+        
+        .attribute-connection-line svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .attribute-connection-line path {
+            stroke: #1a202c;
+            stroke-width: 2;
+            fill: none;
         }
 
         .attribute-key {
@@ -164,6 +188,7 @@
             padding: 10px;
             border-radius: 5px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            pointer-events: none;
         }
 
         .zoom-controls button {
@@ -173,6 +198,7 @@
             background: #f7fafc;
             cursor: pointer;
             border-radius: 3px;
+            pointer-events: auto;
         }
 
         .zoom-controls button:hover {
@@ -190,6 +216,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             max-width: 180px;
             font-size: 0.75em;
+            pointer-events: none;
         }
 
         .legend h3 {
@@ -262,7 +289,7 @@
 
         .relationship {
             position: absolute;
-            z-index: 8;
+            z-index: 20;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -270,13 +297,13 @@
 
         .relationship-svg {
             position: absolute;
-            z-index: 7;
+            z-index: 19;
             pointer-events: none;
         }
 
         .relationship-text {
             position: relative;
-            z-index: 9;
+            z-index: 21;
             font-weight: bold;
             font-size: 0.7em;
             color: #2d3748;
@@ -321,7 +348,7 @@
         <div class="zoom-controls">
             <button onclick="zoomIn()">Zoom In</button>
             <button onclick="zoomOut()">Zoom Out</button>
-            <button onclick="resetZoom()">Reset</button>
+            <button onclick="resetZoom()">Reset View</button>
         </div>
         
         <div class="legend">
@@ -371,6 +398,12 @@
                 <div class="legend-item">
                     <span>Ctrl+Scroll: Zoom</span>
                 </div>
+                <div class="legend-item">
+                    <span>Double-click Attribute: Select</span>
+                </div>
+                <div class="legend-item">
+                    <span>Click 2 Attributes: Swap</span>
+                </div>
             </div>
         </div>
         
@@ -411,13 +444,13 @@
                 <div class="attribute" style="left: 70px; top: -80px;" data-entity="users">
                     <div class="attribute-text"><span class="attribute-key">int</span><br>total_pages_read</div>
                 </div>
-                <div class="attribute" style="left: -50px; top: 190px;" data-entity="users">
+                <div class="attribute" style="left: -50px; top: -130px;" data-entity="users">
                     <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
                 </div>
-                <div class="attribute" style="left: 70px; top: 190px;" data-entity="users">
+                <div class="attribute" style="left: 70px; top: -130px;" data-entity="users">
                     <div class="attribute-text"><span class="attribute-key">datetime</span><br>updated_at</div>
                 </div>
-                <div class="attribute" style="left: 10px; top: 245px;" data-entity="users">
+                <div class="attribute" style="left: 10px; top: -180px;" data-entity="users">
                     <div class="attribute-text"><span class="attribute-key">datetime</span><br>last_login_at</div>
                 </div>
             </div>
@@ -463,10 +496,10 @@
                 <div class="attribute" style="left: 70px; top: 190px;" data-entity="books">
                     <div class="attribute-text"><span class="attribute-key">datetime</span><br>fetched_at</div>
                 </div>
-                <div class="attribute" style="left: -50px; top: 245px;" data-entity="books">
+                <div class="attribute" style="left: -50px; top: -130px;" data-entity="books">
                     <div class="attribute-text"><span class="attribute-key">datetime</span><br>created_at</div>
                 </div>
-                <div class="attribute" style="left: 70px; top: 245px;" data-entity="books">
+                <div class="attribute" style="left: 70px; top: -130px;" data-entity="books">
                     <div class="attribute-text"><span class="attribute-key">datetime</span><br>updated_at</div>
                 </div>
             </div>
@@ -962,26 +995,236 @@
             </div>
 
             <!-- Relationships Container -->
-            <div id="relationships-container"></div>
+            <div id="relationships-container">
+                <!-- USERS ↔ USER_BOOKS -->
+                <div class="relationship" style="left: 2150px; top: 1900px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">has</div>
+                </div>
+
+                <!-- BOOKS ↔ USER_BOOKS -->
+                <div class="relationship" style="left: 1650px; top: 1900px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">included in</div>
+                </div>
+
+                <!-- USERS ↔ SHELVES -->
+                <div class="relationship" style="left: 2900px; top: 2200px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">creates</div>
+                </div>
+
+                <!-- SHELVES ↔ SHELF_BOOKS -->
+                <div class="relationship" style="left: 3150px; top: 2500px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">contains</div>
+                </div>
+
+                <!-- BOOKS ↔ SHELF_BOOKS -->
+                <div class="relationship" style="left: 2150px; top: 2500px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">placed on</div>
+                </div>
+
+                <!-- USERS ↔ REVIEWS -->
+                <div class="relationship" style="left: 2150px; top: 2400px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">writes</div>
+                </div>
+
+                <!-- BOOKS ↔ REVIEWS -->
+                <div class="relationship" style="left: 1650px; top: 2500px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">reviewed in</div>
+                </div>
+
+                <!-- BOOKS ↔ BOOK_AUTHORS -->
+                <div class="relationship" style="left: 1250px; top: 1900px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">written by</div>
+                </div>
+
+                <!-- AUTHORS ↔ BOOK_AUTHORS -->
+                <div class="relationship" style="left: 950px; top: 1900px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">writes</div>
+                </div>
+
+                <!-- BOOKS ↔ BOOK_GENRES -->
+                <div class="relationship" style="left: 1250px; top: 2600px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">categorized as</div>
+                </div>
+
+                <!-- GENRES ↔ BOOK_GENRES -->
+                <div class="relationship" style="left: 850px; top: 3000px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">categorizes</div>
+                </div>
+
+                <!-- USER_BOOKS ↔ READING_SESSIONS -->
+                <div class="relationship" style="left: 2400px; top: 1600px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">has</div>
+                </div>
+
+                <!-- USERS ↔ READING_HISTORY -->
+                <div class="relationship" style="left: 2400px; top: 2600px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">has</div>
+                </div>
+
+                <!-- USERS ↔ ACTIVITIES -->
+                <div class="relationship" style="left: 2400px; top: 1800px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">generates</div>
+                </div>
+
+                <!-- USER_BOOKS ↔ ACTIVITIES -->
+                <div class="relationship" style="left: 2150px; top: 1500px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">generates</div>
+                </div>
+
+                <!-- BOOKS ↔ ACTIVITIES -->
+                <div class="relationship" style="left: 1900px; top: 1800px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">referenced in</div>
+                </div>
+
+                <!-- USERS ↔ USER_BADGES -->
+                <div class="relationship" style="left: 2150px; top: 1600px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">earns</div>
+                </div>
+
+                <!-- BADGES ↔ USER_BADGES -->
+                <div class="relationship" style="left: 1250px; top: 1200px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">earned as</div>
+                </div>
+
+                <!-- BADGES ↔ ACTIVITIES -->
+                <div class="relationship" style="left: 1500px; top: 1400px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">referenced in</div>
+                </div>
+
+                <!-- REVIEWS ↔ ACTIVITIES -->
+                <div class="relationship" style="left: 2150px; top: 2100px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">generates</div>
+                </div>
+
+                <!-- USERS ↔ FRIENDS (user1) -->
+                <div class="relationship" style="left: 3200px; top: 1900px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">friends with (user1)</div>
+                </div>
+
+                <!-- USERS ↔ FRIENDS (user2) -->
+                <div class="relationship" style="left: 3300px; top: 1900px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">friends with (user2)</div>
+                </div>
+
+                <!-- USERS ↔ FRIEND_REQUESTS (requester) -->
+                <div class="relationship" style="left: 3200px; top: 2500px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">sends</div>
+                </div>
+
+                <!-- USERS ↔ FRIEND_REQUESTS (recipient) -->
+                <div class="relationship" style="left: 3300px; top: 2500px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">receives</div>
+                </div>
+
+                <!-- USERS ↔ NOTIFICATIONS -->
+                <div class="relationship" style="left: 2900px; top: 1900px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">receives</div>
+                </div>
+
+                <!-- GENRES ↔ GENRES (self-referential) -->
+                <div class="relationship" style="left: 500px; top: 3000px; width: 90px; height: 45px;">
+                    <svg class="relationship-svg" viewBox="0 0 90 45" style="width: 90px; height: 45px;">
+                        <polygon points="45,0 90,22.5 45,45 0,22.5" fill="white" stroke="#2d3748" stroke-width="2"/>
+                    </svg>
+                    <div class="relationship-text">parent of</div>
+                </div>
+            </div>
         </div>
-    </div>
+        </div>
 
     <script>
-        let currentZoom = 0.5; // Default to 50% zoom for more zoomed out view
+        let currentZoom = 0.5;
         const zoomStep = 0.1;
-        const panSpeed = 1.5; // Speed multiplier for panning (higher = faster)
+        const panSpeed = 1.5;
         let isDragging = false;
         let dragStart = { x: 0, y: 0 };
         let scrollPosition = { x: 0, y: 0 };
         let initialPinchDistance = 0;
         let initialZoomOnPinch = 0.5;
+        let selectedAttributes = [];
+        let attributeSwapMode = false;
 
         const container = document.querySelector('.diagram-container');
         const diagram = document.getElementById('diagram');
 
         function updateZoom() {
             diagram.style.transform = `scale(${currentZoom}) translate(${scrollPosition.x}px, ${scrollPosition.y}px)`;
-            diagram.style.transformOrigin = 'top left';
+            diagram.style.transformOrigin = '0 0';
         }
 
         function zoomIn() {
@@ -995,13 +1238,11 @@
         }
 
         function resetZoom() {
-            // Reset to fit view
             fitViewToContent();
         }
 
-        // Click and hold scrolling (panning)
         container.addEventListener('mousedown', (e) => {
-            if (e.button === 0) { // Left mouse button
+            if (e.button === 0) {
                 isDragging = true;
                 container.classList.add('dragging');
                 dragStart.x = e.clientX - scrollPosition.x / (currentZoom * panSpeed);
@@ -1025,19 +1266,16 @@
             }
         });
 
-        // Ctrl+Scroll zoom (slower for trackpad)
         container.addEventListener('wheel', (e) => {
             if (e.ctrlKey || e.metaKey) {
                 e.preventDefault();
-                // Use a much smaller step for trackpad - proportional to scroll delta
-                const trackpadZoomStep = 0.02; // Much smaller step for smoother trackpad zooming
+                const trackpadZoomStep = 0.02;
                 const delta = e.deltaY > 0 ? -trackpadZoomStep : trackpadZoomStep;
                 currentZoom = Math.max(0.5, Math.min(2, currentZoom + delta));
                 updateZoom();
             }
         }, { passive: false });
 
-        // Pinch zoom (touch)
         let touches = [];
         container.addEventListener('touchstart', (e) => {
             if (e.touches.length === 2) {
@@ -1078,12 +1316,10 @@
             return Math.sqrt(dx * dx + dy * dy);
         }
         
-        // Initialize zoom on load
         window.addEventListener('DOMContentLoaded', () => {
             updateZoom();
         });
 
-        // Calculate bounding box of an entity group (entity + all attributes)
         function getEntityGroupBounds(group) {
             const entity = group.querySelector('.entity');
             if (!entity) return null;
@@ -1094,7 +1330,6 @@
             let minX = Infinity, maxX = -Infinity;
             let minY = Infinity, maxY = -Infinity;
             
-            // Check entity
             const entityLeft = parseFloat(entity.style.left) || 0;
             const entityTop = parseFloat(entity.style.top) || 0;
             const entityRect = entity.getBoundingClientRect();
@@ -1129,13 +1364,11 @@
             };
         }
         
-        // Automatic layout: Arrange entity groups in a grid with proper spacing
         function layoutEntityGroups() {
             const entityGroups = Array.from(document.querySelectorAll('.entity-group'));
             const containerPadding = 200;
-            const spacing = 700; // Space between entity groups (increased from 400)
+            const spacing = 700;
             
-            // First, center entities within their attribute clusters with padding to avoid overlaps
             entityGroups.forEach(group => {
                 const entity = group.querySelector('.entity');
                 if (!entity) return;
@@ -1145,7 +1378,6 @@
                 
                 if (attributes.length === 0) return;
                 
-                // Calculate bounding box of all attributes
                 let minLeft = Infinity;
                 let maxLeft = -Infinity;
                 let minTop = Infinity;
@@ -1163,30 +1395,24 @@
                     maxTop = Math.max(maxTop, top + height);
                 });
                 
-                // Get entity dimensions
                 const entityRect = entity.getBoundingClientRect();
                 const entityWidth = entityRect.width || 120;
                 const entityHeight = entityRect.height || 50;
                 
-                // Add padding around entity to prevent overlap with attributes
-                const entityPadding = 20; // Padding in pixels
+                const entityPadding = 20;
                 const paddedEntityWidth = entityWidth + entityPadding * 2;
                 const paddedEntityHeight = entityHeight + entityPadding * 2;
                 
-                // Calculate center of attributes bounding box
                 const centerX = (minLeft + maxLeft) / 2;
                 const centerY = (minTop + maxTop) / 2;
                 
-                // Add padding around entity to prevent overlap with attributes
-                const entityMargin = 20; // Minimum margin between entity and attributes
+                const entityMargin = 20;
                 
-                // Expand the attribute bounding box by entity size + margin
                 const expandedMinLeft = minLeft - entityWidth / 2 - entityMargin;
                 const expandedMaxLeft = maxLeft + entityWidth / 2 + entityMargin;
                 const expandedMinTop = minTop - entityHeight / 2 - entityMargin;
                 const expandedMaxTop = maxTop + entityHeight / 2 + entityMargin;
                 
-                // Check if center position would cause overlap
                 const entityLeftAtCenter = centerX - entityWidth / 2;
                 const entityRightAtCenter = centerX + entityWidth / 2;
                 const entityTopAtCenter = centerY - entityHeight / 2;
@@ -1195,7 +1421,6 @@
                 let finalX = centerX;
                 let finalY = centerY;
                 
-                // Check if entity at center overlaps with any attribute
                 let overlaps = false;
                 attributes.forEach(attr => {
                 const attrLeft = parseFloat(attr.style.left) || 0;
@@ -1209,21 +1434,18 @@
                     }
                 });
                 
-                // If overlaps, position entity outside the expanded bounding box
                 if (overlaps) {
-                    // Try positions around the expanded bounding box (positions are entity center coordinates)
                     const positions = [
-                        { x: expandedMinLeft - entityMargin, y: centerY }, // Left
-                        { x: expandedMaxLeft + entityMargin, y: centerY }, // Right
-                        { x: centerX, y: expandedMinTop - entityMargin }, // Top
-                        { x: centerX, y: expandedMaxTop + entityMargin }, // Bottom
-                        { x: expandedMinLeft - entityMargin, y: expandedMinTop - entityMargin }, // Top-left
-                        { x: expandedMaxLeft + entityMargin, y: expandedMinTop - entityMargin }, // Top-right
-                        { x: expandedMinLeft - entityMargin, y: expandedMaxTop + entityMargin }, // Bottom-left
-                        { x: expandedMaxLeft + entityMargin, y: expandedMaxTop + entityMargin }  // Bottom-right
+                        { x: expandedMinLeft - entityMargin, y: centerY },
+                        { x: expandedMaxLeft + entityMargin, y: centerY },
+                        { x: centerX, y: expandedMinTop - entityMargin },
+                        { x: centerX, y: expandedMaxTop + entityMargin },
+                        { x: expandedMinLeft - entityMargin, y: expandedMinTop - entityMargin },
+                        { x: expandedMaxLeft + entityMargin, y: expandedMinTop - entityMargin },
+                        { x: expandedMinLeft - entityMargin, y: expandedMaxTop + entityMargin },
+                        { x: expandedMaxLeft + entityMargin, y: expandedMaxTop + entityMargin }
                     ];
                     
-                    // Find position with least overlap
                     let bestPosition = positions[0];
                     let minOverlaps = Infinity;
                     
@@ -1256,31 +1478,27 @@
                     finalY = bestPosition.y;
                 }
                 
-                // Position entity
                 let entityLeft = finalX - entityWidth / 2;
                 const entityTop = finalY - entityHeight / 2;
                 
-                // Apply left offset for specific entities that need to be more centered
                 const entitiesNeedingLargeLeftOffset = ['entity-reading_sessions', 'entity-reading_history'];
                 const entitiesNeedingSmallLeftOffset = ['entity-user_books', 'entity-shelf_books', 'entity-user_badges', 'entity-book_authors'];
                 
                 if (entitiesNeedingLargeLeftOffset.includes(entity.id)) {
-                    entityLeft -= 50; // Shift 50px to the left for better centering
+                    entityLeft -= 50;
                 } else if (entitiesNeedingSmallLeftOffset.includes(entity.id)) {
-                    entityLeft -= 25; // Shift 25px to the left for better centering
+                    entityLeft -= 25;
                 }
                 
                 entity.style.left = entityLeft + 'px';
                 entity.style.top = entityTop + 'px';
             });
             
-            // Calculate bounds for each group
             const groupBounds = entityGroups.map(group => {
                 const bounds = getEntityGroupBounds(group);
                 return { group, bounds };
             }).filter(item => item.bounds !== null);
             
-            // Arrange in a grid: 4 columns, ~5 rows
             const cols = 4;
             const rows = Math.ceil(groupBounds.length / cols);
             
@@ -1289,12 +1507,9 @@
                 const col = index % cols;
                 const row = Math.floor(index / cols);
                 
-                // Calculate position: account for group's internal offset
                 const targetX = containerPadding + col * spacing;
                 const targetY = containerPadding + row * spacing;
                 
-                // Adjust group position so its content is at target position
-                // We need to offset by the group's internal minX/minY
                 const groupLeft = targetX - bounds.minX;
                 const groupTop = targetY - bounds.minY;
                 
@@ -1302,19 +1517,124 @@
                 group.style.top = groupTop + 'px';
             });
             
-            // Update container size
             updateContainerSize();
-            // Draw attribute connection lines
             setTimeout(() => {
                 drawAttributeConnectionLines();
             }, 100);
         }
         
-        // Draw lines connecting attributes to their entities
+        function getObstacles(group, currentAttr, entityId) {
+            const obstacles = [];
+            const groupLeft = parseFloat(group.style.left) || 0;
+            const groupTop = parseFloat(group.style.top) || 0;
+            const attributes = group.querySelectorAll(`.attribute[data-entity="${entityId}"]`);
+            
+            attributes.forEach(attr => {
+                if (attr === currentAttr) return;
+                
+                const attrLeft = parseFloat(attr.style.left) || 0;
+                const attrTop = parseFloat(attr.style.top) || 0;
+                const attrWidth = 130;
+                const attrHeight = 65;
+                
+                obstacles.push({
+                    x: groupLeft + attrLeft + attrWidth / 2,
+                    y: groupTop + attrTop + attrHeight / 2,
+                    width: attrWidth,
+                    height: attrHeight,
+                    left: groupLeft + attrLeft,
+                    top: groupTop + attrTop,
+                    right: groupLeft + attrLeft + attrWidth,
+                    bottom: groupTop + attrTop + attrHeight
+                });
+            });
+            
+            return obstacles;
+        }
+        
+        function pointInObstacle(x, y, obstacles) {
+            for (const obs of obstacles) {
+                if (x >= obs.left && x <= obs.right && y >= obs.top && y <= obs.bottom) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        function findPathAroundObstacles(startX, startY, endX, endY, obstacles) {
+            const path = [{ x: startX, y: startY }];
+            let currentX = startX;
+            let currentY = startY;
+            
+            const dx = endX - startX;
+            const dy = endY - startY;
+            const steps = Math.max(Math.abs(dx), Math.abs(dy)) / 10;
+            
+            let directPathClear = true;
+            for (let i = 0; i <= steps; i++) {
+                const t = i / steps;
+                const x = startX + dx * t;
+                const y = startY + dy * t;
+                if (pointInObstacle(x, y, obstacles)) {
+                    directPathClear = false;
+                    break;
+                }
+            }
+            
+            if (directPathClear) {
+                path.push({ x: endX, y: endY });
+                return path;
+            }
+            
+            const margin = 20;
+            let waypointX = startX;
+            let waypointY = startY;
+            
+            if (Math.abs(dx) > Math.abs(dy)) {
+                waypointX = endX;
+                waypointY = startY;
+                
+                let horizontalClear = true;
+                for (let x = Math.min(startX, endX); x <= Math.max(startX, endX); x += 5) {
+                    if (pointInObstacle(x, startY, obstacles)) {
+                        horizontalClear = false;
+                        waypointY = startY + (dy > 0 ? margin : -margin);
+                        break;
+                    }
+                }
+                
+                if (!horizontalClear) {
+                    waypointY = startY + (dy > 0 ? 100 : -100);
+                }
+                
+                path.push({ x: waypointX, y: waypointY });
+            } else {
+                waypointX = startX;
+                waypointY = endY;
+                
+                let verticalClear = true;
+                for (let y = Math.min(startY, endY); y <= Math.max(startY, endY); y += 5) {
+                    if (pointInObstacle(startX, y, obstacles)) {
+                        verticalClear = false;
+                        waypointX = startX + (dx > 0 ? margin : -margin);
+                        break;
+                    }
+                }
+                
+                if (!verticalClear) {
+                    waypointX = startX + (dx > 0 ? 100 : -100);
+                }
+                
+                path.push({ x: waypointX, y: waypointY });
+            }
+            
+            path.push({ x: endX, y: endY });
+            return path;
+        }
+        
         function drawAttributeConnectionLines() {
             const container = document.querySelector('.diagram-container');
             
-            // Remove existing connection lines
             const existingLines = container.querySelectorAll('.attribute-connection-line');
             existingLines.forEach(line => line.remove());
             
@@ -1329,7 +1649,6 @@
                 
                 if (attributes.length === 0) return;
                 
-                // Get entity position and dimensions
                 const groupLeft = parseFloat(group.style.left) || 0;
                 const groupTop = parseFloat(group.style.top) || 0;
                 const entityLeft = parseFloat(entity.style.left) || 0;
@@ -1341,7 +1660,6 @@
                 const entityCenterX = groupLeft + entityLeft + entityWidth / 2;
                 const entityCenterY = groupTop + entityTop + entityHeight / 2;
                 
-                // Draw line from each attribute to entity
                 attributes.forEach(attr => {
                     const attrLeft = parseFloat(attr.style.left) || 0;
                     const attrTop = parseFloat(attr.style.top) || 0;
@@ -1351,65 +1669,111 @@
                     const attrCenterX = groupLeft + attrLeft + attrWidth / 2;
                     const attrCenterY = groupTop + attrTop + attrHeight / 2;
                     
-                    // Calculate distance and angle
                     const dx = entityCenterX - attrCenterX;
                     const dy = entityCenterY - attrCenterY;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-                    
-                    // Calculate connection points on the edges of attribute and entity
-                    // For attribute (oval), find edge point closest to entity
                     const attrAngle = Math.atan2(dy, dx);
                     const attrEdgeX = attrCenterX + Math.cos(attrAngle) * (attrWidth / 2);
                     const attrEdgeY = attrCenterY + Math.sin(attrAngle) * (attrHeight / 2);
                     
-                    // For entity (rectangle), find edge point closest to attribute
-                    const entityAngle = Math.atan2(-dy, -dx);
-                    let entityEdgeX, entityEdgeY;
-                    
-                    // Determine which edge of the rectangle the line should connect to
                     const absDx = Math.abs(dx);
                     const absDy = Math.abs(dy);
                     const entityHalfWidth = entityWidth / 2;
                     const entityHalfHeight = entityHeight / 2;
                     
+                    let entityEdgeX, entityEdgeY;
                     if (absDx / entityHalfWidth > absDy / entityHalfHeight) {
-                        // Connect to left or right edge
                         entityEdgeX = entityCenterX + (dx > 0 ? entityHalfWidth : -entityHalfWidth);
                         entityEdgeY = entityCenterY + (dy / absDx) * entityHalfWidth * (dx > 0 ? 1 : -1);
                     } else {
-                        // Connect to top or bottom edge
                         entityEdgeY = entityCenterY + (dy > 0 ? entityHalfHeight : -entityHalfHeight);
                         entityEdgeX = entityCenterX + (dx / absDy) * entityHalfHeight * (dy > 0 ? 1 : -1);
                     }
                     
-                    // Calculate line length and position
-                    const lineDx = entityEdgeX - attrEdgeX;
-                    const lineDy = entityEdgeY - attrEdgeY;
-                    const lineLength = Math.sqrt(lineDx * lineDx + lineDy * lineDy);
-                    const lineAngle = Math.atan2(lineDy, lineDx) * 180 / Math.PI;
+                    const obstacles = getObstacles(group, attr, entityId);
+                    const path = findPathAroundObstacles(attrEdgeX, attrEdgeY, entityEdgeX, entityEdgeY, obstacles);
                     
-                    // Create line element
-                    const line = document.createElement('div');
-                    line.className = 'attribute-connection-line';
-                    line.style.width = lineLength + 'px';
-                    line.style.height = '1px';
-                    line.style.left = attrEdgeX + 'px';
-                    line.style.top = attrEdgeY + 'px';
-                    line.style.transformOrigin = '0 50%';
-                    line.style.transform = `rotate(${lineAngle}deg)`;
+                    const bounds = {
+                        minX: Math.min(...path.map(p => p.x), attrEdgeX, entityEdgeX),
+                        maxX: Math.max(...path.map(p => p.x), attrEdgeX, entityEdgeX),
+                        minY: Math.min(...path.map(p => p.y), attrEdgeY, entityEdgeY),
+                        maxY: Math.max(...path.map(p => p.y), attrEdgeY, entityEdgeY)
+                    };
                     
-                    container.appendChild(line);
+                    const svgWidth = bounds.maxX - bounds.minX + 20;
+                    const svgHeight = bounds.maxY - bounds.minY + 20;
+                    
+                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('class', 'attribute-connection-line');
+                    svg.setAttribute('width', svgWidth);
+                    svg.setAttribute('height', svgHeight);
+                    svg.style.left = (bounds.minX - 10) + 'px';
+                    svg.style.top = (bounds.minY - 10) + 'px';
+                    
+                    const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    let pathData = `M ${attrEdgeX - bounds.minX + 10} ${attrEdgeY - bounds.minY + 10}`;
+                    
+                    for (let i = 1; i < path.length; i++) {
+                        pathData += ` L ${path[i].x - bounds.minX + 10} ${path[i].y - bounds.minY + 10}`;
+                    }
+                    
+                    pathElement.setAttribute('d', pathData);
+                    svg.appendChild(pathElement);
+                    container.appendChild(svg);
                 });
             });
         }
         
-        // Legacy function name for compatibility
+        function setupAttributeInteraction() {
+            const attributes = document.querySelectorAll('.attribute');
+            
+            attributes.forEach(attr => {
+                attr.addEventListener('dblclick', (e) => {
+                    e.stopPropagation();
+                    attr.classList.toggle('selected');
+                    
+                    if (attr.classList.contains('selected')) {
+                        selectedAttributes.push(attr);
+                        if (selectedAttributes.length > 2) {
+                            selectedAttributes[0].classList.remove('selected');
+                            selectedAttributes.shift();
+                        }
+                    } else {
+                        selectedAttributes = selectedAttributes.filter(a => a !== attr);
+                    }
+                    
+                    if (selectedAttributes.length === 2) {
+                        swapAttributes(selectedAttributes[0], selectedAttributes[1]);
+                        selectedAttributes.forEach(a => a.classList.remove('selected'));
+                        selectedAttributes = [];
+                        setTimeout(() => {
+                            drawAttributeConnectionLines();
+                        }, 100);
+                    }
+                });
+            });
+        }
+        
+        function swapAttributes(attr1, attr2) {
+            const group1 = attr1.closest('.entity-group');
+            const group2 = attr2.closest('.entity-group');
+            
+            if (group1 !== group2) return;
+            
+            const left1 = attr1.style.left;
+            const top1 = attr1.style.top;
+            const left2 = attr2.style.left;
+            const top2 = attr2.style.top;
+            
+            attr1.style.left = left2;
+            attr1.style.top = top2;
+            attr2.style.left = left1;
+            attr2.style.top = top1;
+        }
+        
         function centerEntities() {
             layoutEntityGroups();
         }
         
-        // Update container size to fit all content
         function updateContainerSize() {
             const container = document.querySelector('.diagram-container');
             const entityGroups = document.querySelectorAll('.entity-group');
@@ -1423,7 +1787,6 @@
                 const groupLeft = parseFloat(group.style.left) || 0;
                 const groupTop = parseFloat(group.style.top) || 0;
                 
-                // Find all attributes in this group
                 const entity = group.querySelector('.entity');
                 if (entity) {
                     const entityId = entity.id.replace('entity-', '');
@@ -1445,7 +1808,6 @@
                     });
                 }
                 
-                // Also check entity bounds
                 const groupRect = group.getBoundingClientRect();
                 const right = groupLeft + groupRect.width;
                 const bottom = groupTop + groupRect.height;
@@ -1454,7 +1816,6 @@
                 maxBottom = Math.max(maxBottom, bottom);
             });
             
-            // Also check relationship bounds
             const relationships = document.querySelectorAll('.relationship-svg');
             relationships.forEach(rel => {
                 const relStyle = window.getComputedStyle(rel);
@@ -1468,7 +1829,6 @@
                 maxBottom = Math.max(maxBottom, relTop + relHeight);
             });
             
-            // Check relationship lines bounds (approximate)
             const lines = document.querySelectorAll('.relationship-line');
             lines.forEach(line => {
                 const lineStyle = window.getComputedStyle(line);
@@ -1481,21 +1841,16 @@
                 maxBottom = Math.max(maxBottom, lineTop);
             });
             
-            // Ensure minimum left position is at least the padding
             if (minLeft < containerPadding) {
                 minLeft = containerPadding;
             }
             
-            // Set container dimensions with padding - only use actual content bounds
-            // Don't set minimums - use actual content size
             const contentWidth = maxRight - minLeft + containerPadding * 2;
             const containerHeight = maxBottom + containerPadding;
             
-            // Ensure container width is at least the viewport width
             const viewportWidth = window.innerWidth;
             const containerWidth = Math.max(contentWidth, viewportWidth);
             
-            // Only set if we have valid bounds
             if (containerWidth > 0 && containerHeight > 0 && isFinite(containerWidth) && isFinite(containerHeight)) {
                 container.style.minWidth = containerWidth + 'px';
                 container.style.minHeight = containerHeight + 'px';
@@ -1503,7 +1858,6 @@
             
         }
 
-        // Helper function to find intersection point of line with rectangle edge
         function getEdgeIntersection(rect, targetX, targetY) {
             const containerRect = document.querySelector('.diagram-container').getBoundingClientRect();
             const rectX = rect.left - containerRect.left;
@@ -1513,11 +1867,9 @@
             const rectCenterX = rectX + rectW / 2;
             const rectCenterY = rectY + rectH / 2;
             
-            // Calculate direction from center to target
             const dx = targetX - rectCenterX;
             const dy = targetY - rectCenterY;
             
-            // Calculate intersection with rectangle edge
             const ratioX = Math.abs(dx) > 0 ? (rectW / 2) / Math.abs(dx) : Infinity;
             const ratioY = Math.abs(dy) > 0 ? (rectH / 2) / Math.abs(dy) : Infinity;
             const ratio = Math.min(ratioX, ratioY);
@@ -1528,55 +1880,40 @@
             };
         }
 
-        // Helper function to find intersection point of line with diamond edge
         function getDiamondEdgeIntersection(relX, relY, relWidth, relHeight, targetX, targetY) {
-            // relX, relY, targetX, targetY are already in container coordinates
             const relLeft = relX - relWidth / 2;
             const relTop = relY - relHeight / 2;
             
-            // Diamond points: top, right, bottom, left (in container coordinates)
             const top = { x: relX, y: relTop };
             const right = { x: relX + relWidth / 2, y: relY };
             const bottom = { x: relX, y: relTop + relHeight };
             const left = { x: relX - relWidth / 2, y: relY };
             
-            // Calculate direction from center to target
             const dx = targetX - relX;
             const dy = targetY - relY;
             const angle = Math.atan2(dy, dx);
             
-            // Determine which edge of the diamond the line intersects
-            // Diamond edges: top-right, right-bottom, bottom-left, left-top
             let edgeStart, edgeEnd;
             
             if (angle >= -Math.PI / 2 && angle < 0) {
-                // Top-right edge
                 edgeStart = top;
                 edgeEnd = right;
             } else if (angle >= 0 && angle < Math.PI / 2) {
-                // Right-bottom edge
                 edgeStart = right;
                 edgeEnd = bottom;
             } else if (angle >= Math.PI / 2 && angle < Math.PI) {
-                // Bottom-left edge
                 edgeStart = bottom;
                 edgeEnd = left;
             } else {
-                // Left-top edge
                 edgeStart = left;
                 edgeEnd = top;
             }
             
-            // Find intersection of line from center to target with the edge
             const edgeDx = edgeEnd.x - edgeStart.x;
             const edgeDy = edgeEnd.y - edgeStart.y;
             
-            // Line from center: (relX, relY) + t * (dx, dy)
-            // Edge: (edgeStart.x, edgeStart.y) + s * (edgeDx, edgeDy)
-            // Solve for intersection
             const denom = dx * edgeDy - dy * edgeDx;
             if (Math.abs(denom) < 0.001) {
-                // Parallel lines, use edge midpoint
                 return {
                     x: (edgeStart.x + edgeEnd.x) / 2,
                     y: (edgeStart.y + edgeEnd.y) / 2
@@ -1586,7 +1923,6 @@
             const t = ((edgeStart.x - relX) * edgeDy - (edgeStart.y - relY) * edgeDx) / denom;
             const s = ((edgeStart.x - relX) * dy - (edgeStart.y - relY) * dx) / denom;
             
-            // Clamp s to [0, 1] to stay on edge
             const clampedS = Math.max(0, Math.min(1, s));
             
             return {
@@ -1595,23 +1931,19 @@
             };
         }
 
-        // Draw relationship lines with cardinality
         function drawRelationships() {
             const container = document.querySelector('.diagram-container');
             const relContainer = document.getElementById('relationships-container');
             if (!relContainer) return;
             
-            // Clear existing relationships
             relContainer.innerHTML = '';
             
-            // Color palette for different relationship types
             const colors = [
                 '#e53e3e', '#3182ce', '#38a169', '#d69e2e', '#805ad5',
                 '#dd6b20', '#319795', '#c53030', '#2c5282', '#276749'
             ];
             
             const relationships = [
-                // Format: [entity1, entity2, relationshipName, card1, card2, colorIndex]
                 ['users', 'user_books', 'has', '1', 'M', 0],
                 ['users', 'shelves', 'creates', '1', 'M', 1],
                 ['users', 'reviews', 'writes', '1', 'M', 2],
@@ -1635,11 +1967,9 @@
                 ['users', 'friend_requests', 'receives', '1', 'M', 6]
             ];
 
-            // Remove existing relationship lines
             const existingLines = document.querySelectorAll('.relationship-line');
             existingLines.forEach(line => line.remove());
 
-            // Track relationship positions to avoid overlaps
             const relPositions = new Map();
             
             relationships.forEach((rel, index) => {
@@ -1650,7 +1980,6 @@
                 
                 if (!entity1 || !entity2) return;
 
-                // Get entity positions and dimensions
                 const containerRect = container.getBoundingClientRect();
                 const entity1Rect = entity1.getBoundingClientRect();
                 const entity2Rect = entity2.getBoundingClientRect();
@@ -1661,16 +1990,13 @@
                 const entity2CenterX = entity2Rect.left - containerRect.left + entity2Rect.width / 2;
                 const entity2CenterY = entity2Rect.top - containerRect.top + entity2Rect.height / 2;
 
-                // Calculate relationship diamond position (midpoint between centers)
                 let relX = (entity1CenterX + entity2CenterX) / 2;
                 let relY = (entity1CenterY + entity2CenterY) / 2;
                 
-                // Check for duplicate relationships and offset them
                 const relKey = `${entity1Id}-${entity2Id}`;
                 if (relPositions.has(relKey)) {
                     const existing = relPositions.get(relKey);
                     existing.count++;
-                    // Offset perpendicular to the line
                     const dx = entity2CenterX - entity1CenterX;
                     const dy = entity2CenterY - entity1CenterY;
                     const angle = Math.atan2(dy, dx);
@@ -1680,18 +2006,14 @@
                 } else {
                     relPositions.set(relKey, { count: 1 });
                 }
-
-                // Get color for this relationship
+                
                 const lineColor = colors[colorIdx % colors.length];
                 
-                // Create relationship diamond using SVG polygon (smaller, wider horizontally)
-                // Diamond dimensions: 90px wide, 45px tall
                 const relWidth = 90;
                 const relHeight = 45;
                 const relLeft = relX - relWidth / 2;
                 const relTop = relY - relHeight / 2;
                 
-                // Create SVG for diamond shape
                 const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                 svg.setAttribute('class', 'relationship-svg');
                 svg.setAttribute('width', relWidth);
@@ -1699,13 +2021,12 @@
                 svg.style.left = relLeft + 'px';
                 svg.style.top = relTop + 'px';
                 
-                // Create diamond polygon: wider horizontally, color-coded
                 const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
                 const points = [
-                    [relWidth / 2, 0],           // Top point
-                    [relWidth, relHeight / 2],   // Right point
-                    [relWidth / 2, relHeight],   // Bottom point
-                    [0, relHeight / 2]           // Left point
+                    [relWidth / 2, 0],
+                    [relWidth, relHeight / 2],
+                    [relWidth / 2, relHeight],
+                    [0, relHeight / 2]
                 ].map(p => p.join(',')).join(' ');
                 polygon.setAttribute('points', points);
                 polygon.setAttribute('fill', 'white');
@@ -1714,7 +2035,6 @@
                 svg.appendChild(polygon);
                 relContainer.appendChild(svg);
                 
-                // Create text container
                 const relationship = document.createElement('div');
                 relationship.className = 'relationship';
                 relationship.style.left = relLeft + 'px';
@@ -1724,7 +2044,6 @@
                 relationship.innerHTML = `<div class="relationship-text">${relName}</div>`;
                 relContainer.appendChild(relationship);
                 
-                // Find edge intersection points - ensure entities exist and are visible
                 if (!entity1Rect || !entity2Rect || entity1Rect.width === 0 || entity2Rect.width === 0) {
                     console.warn(`Skipping relationship ${relName}: entities not properly positioned`);
                     return;
@@ -1735,7 +2054,6 @@
                 const relEdge1 = getDiamondEdgeIntersection(relX, relY, relWidth, relHeight, entity1CenterX, entity1CenterY);
                 const relEdge2 = getDiamondEdgeIntersection(relX, relY, relWidth, relHeight, entity2CenterX, entity2CenterY);
 
-                // Create cardinality labels
                 const card1El = document.createElement('div');
                 card1El.className = 'cardinality';
                 card1El.textContent = card1;
@@ -1750,7 +2068,6 @@
                 card2El.style.color = lineColor;
                 relContainer.appendChild(card2El);
 
-                // Draw line from entity1 edge to relationship edge
                 const line1 = document.createElement('div');
                 line1.className = 'relationship-line';
                 const dist1 = Math.sqrt(Math.pow(relEdge1.x - entity1Edge.x, 2) + Math.pow(relEdge1.y - entity1Edge.y, 2));
@@ -1763,8 +2080,7 @@
                 line1.style.transform = `rotate(${angle1}deg)`;
                 line1.style.backgroundColor = lineColor;
                 container.appendChild(line1);
-
-                // Draw line from relationship edge to entity2 edge
+                
                 const line2 = document.createElement('div');
                 line2.className = 'relationship-line';
                 const dist2 = Math.sqrt(Math.pow(entity2Edge.x - relEdge2.x, 2) + Math.pow(entity2Edge.y - relEdge2.y, 2));
@@ -1778,7 +2094,6 @@
                 line2.style.backgroundColor = lineColor;
                 container.appendChild(line2);
 
-                // Position cardinality labels on lines
                 const card1PosX = entity1Edge.x + (relEdge1.x - entity1Edge.x) * 0.8;
                 const card1PosY = entity1Edge.y + (relEdge1.y - entity1Edge.y) * 0.8;
                 card1El.style.left = (card1PosX - 12) + 'px';
@@ -1791,15 +2106,12 @@
             });
         }
 
-        // Fit and center view on entities and attributes only (not relationships)
-        // Relationships are positioned between entities, so they don't need to affect zoom
         function fitViewToContent() {
             const container = document.querySelector('.diagram-container');
             const entityGroups = document.querySelectorAll('.entity-group');
             
             if (entityGroups.length === 0) return;
             
-            // Calculate bounds of entities and attributes ONLY (not relationships)
             let minX = Infinity, maxX = -Infinity;
             let minY = Infinity, maxY = -Infinity;
             
@@ -1807,7 +2119,6 @@
                 const groupLeft = parseFloat(group.style.left) || 0;
                 const groupTop = parseFloat(group.style.top) || 0;
                 
-                // Check entity
                 const entity = group.querySelector('.entity');
                 if (entity) {
                     const entityLeft = parseFloat(entity.style.left) || 0;
@@ -1822,7 +2133,6 @@
                     maxY = Math.max(maxY, groupTop + entityTop + entityHeight);
                 }
                 
-                // Check attributes
                 const attributes = group.querySelectorAll('.attribute');
                 attributes.forEach(attr => {
                     const attrLeft = parseFloat(attr.style.left) || 0;
@@ -1837,33 +2147,24 @@
                 });
             });
             
-            // DON'T include relationships in bounds - they're positioned between entities
-            // and would cause the view to zoom out too much
-            
-            // If we have valid bounds, fit and center the view
             if (isFinite(minX) && isFinite(maxX) && isFinite(minY) && isFinite(maxY) && 
                 maxX > minX && maxY > minY) {
                 
-                // Calculate content dimensions
                 const contentWidth = maxX - minX;
                 const contentHeight = maxY - minY;
                 const contentCenterX = (minX + maxX) / 2;
                 const contentCenterY = (minY + maxY) / 2;
                 
-                // Get viewport dimensions
                 const viewportWidth = container.clientWidth;
                 const viewportHeight = container.clientHeight;
                 
-                // Calculate zoom to fit entities/attributes with more padding (more zoomed out)
-                const paddingFactor = 0.7; // Smaller = more zoomed out (was 0.85)
+                const paddingFactor = 0.75;
                 const zoomX = (viewportWidth * paddingFactor) / contentWidth;
                 const zoomY = (viewportHeight * paddingFactor) / contentHeight;
                 
-                // Use the smaller zoom to ensure everything fits
-                currentZoom = Math.min(zoomX, zoomY, 2); // Cap at 2x max
-                currentZoom = Math.max(currentZoom, 0.15); // Minimum 0.15x (more zoomed out)
+                currentZoom = Math.min(zoomX, zoomY, 2);
+                currentZoom = Math.max(currentZoom, 0.1);
                 
-                // Calculate scroll position to center content in viewport
                 scrollPosition.x = (viewportWidth / 2) - (contentCenterX * currentZoom);
                 scrollPosition.y = (viewportHeight / 2) - (contentCenterY * currentZoom);
                 
@@ -1871,9 +2172,8 @@
             }
         }
 
-        // Increase spacing between attributes
         function increaseAttributeSpacing() {
-            const spacingMultiplier = 1.4; // Increase spacing by 40%
+            const spacingMultiplier = 1.4;
             const entityGroups = document.querySelectorAll('.entity-group');
             
             entityGroups.forEach(group => {
@@ -1882,37 +2182,34 @@
                     const currentLeft = parseFloat(attr.style.left) || 0;
                     const currentTop = parseFloat(attr.style.top) || 0;
                     
-                    // Scale the positions to increase spacing
                     attr.style.left = (currentLeft * spacingMultiplier) + 'px';
                     attr.style.top = (currentTop * spacingMultiplier) + 'px';
                 });
             });
         }
 
+        let initialViewSet = false;
+        
         window.addEventListener('load', () => {
-            // First increase attribute spacing
             increaseAttributeSpacing();
-            // Then layout the entities properly
             layoutEntityGroups();
-            setTimeout(() => {
-                // Fit view to entities
-                fitViewToContent();
-                // Draw attribute connection lines
-                drawAttributeConnectionLines();
-                // Relationships removed for now
-                // drawRelationships();
-                updateContainerSize();
-            }, 300);
+            setupAttributeInteraction();
+            
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    drawAttributeConnectionLines();
+                    updateContainerSize();
+                    
+                    if (!initialViewSet) {
+                        fitViewToContent();
+                        initialViewSet = true;
+                    }
+                });
+            });
         });
+        
         window.addEventListener('resize', () => {
-            layoutEntityGroups();
-            setTimeout(() => {
-                // Draw attribute connection lines
-                drawAttributeConnectionLines();
-                // Relationships removed for now
-                // drawRelationships();
                 updateContainerSize();
-            }, 300);
         });
     </script>
 </body>
