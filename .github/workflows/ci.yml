@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_DATABASE: stacks_db
+          MYSQL_USER: stacks_user
+          MYSQL_PASSWORD: secure_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Run linter
+        working-directory: ./backend
+        run: npm run lint
+      
+      - name: Run type check
+        working-directory: ./backend
+        run: npx tsc --noEmit
+      
+      - name: Run migrations
+        working-directory: ./backend
+        env:
+          DB_HOST: localhost
+          DB_PORT: 3306
+          DB_USER: stacks_user
+          DB_PASSWORD: secure_password
+          DB_NAME: stacks_db
+          JWT_SECRET: test-secret-key-min-32-characters
+          JWT_REFRESH_SECRET: test-refresh-secret-min-32-characters
+        run: npm run migrate
+      
+      - name: Run tests
+        working-directory: ./backend
+        env:
+          DB_HOST: localhost
+          DB_PORT: 3306
+          DB_USER: stacks_user
+          DB_PASSWORD: secure_password
+          DB_NAME: stacks_db
+          JWT_SECRET: test-secret-key-min-32-characters
+          JWT_REFRESH_SECRET: test-refresh-secret-min-32-characters
+        run: npm test
+  
+  ios:
+    runs-on: macos-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_15.0.app/Contents/Developer
+      
+      - name: Run SwiftLint
+        uses: norio-nomura/action-swiftlint@3.2.1
+        with:
+          args: --strict
+      
+      - name: Build iOS app
+        run: |
+          xcodebuild clean build \
+            -project Stacks/Stacks.xcodeproj \
+            -scheme Stacks \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
+      
+      - name: Run iOS tests
+        run: |
+          xcodebuild test \
+            -project Stacks/Stacks.xcodeproj \
+            -scheme Stacks \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
+
