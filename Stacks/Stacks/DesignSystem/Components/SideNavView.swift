@@ -1,0 +1,206 @@
+import SwiftUI
+
+struct SideNavView: View {
+    @Binding var isPresented: Bool
+    let coordinator: AppCoordinator
+    @StateObject private var profileService = ProfileService.shared
+    
+    var body: some View {
+        ZStack {
+            // Blur overlay background
+            Color.black.opacity(isPresented ? 0.3 : 0)
+                .ignoresSafeArea()
+                .onTapGesture {
+                    if isPresented {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            isPresented = false
+                        }
+                    }
+                }
+                .allowsHitTesting(isPresented)
+            
+            // Side navigation panel
+            HStack(spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
+                    // Profile section
+                    VStack(alignment: .leading, spacing: 12) {
+                        if let profile = profileService.profile {
+                            // Display name (using username for now, can be updated when displayName is available)
+                            Text(profile.username)
+                                .font(.title1)
+                                .foregroundColor(.primaryButton)
+                            
+                            // Username with @ prefix
+                            Text("@\(profile.username)")
+                                .font(.body)
+                                .foregroundColor(.secondaryText)
+                        } else {
+                            Text("Loading...")
+                                .font(.title1)
+                                .foregroundColor(.primaryButton)
+                        }
+                        
+                        // Followers and Following bubbles
+                        HStack(spacing: 12) {
+                            FollowStatBubble(count: 500, label: "Followers")
+                            FollowStatBubble(count: 420, label: "Following")
+                        }
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.top, 60)
+                    .padding(.bottom, 32)
+                    
+                    // Menu items
+                    VStack(alignment: .leading, spacing: 0) {
+                        MenuItem(
+                            icon: "house.fill",
+                            title: "Home",
+                            isSelected: true
+                        ) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                isPresented = false
+                            }
+                        }
+                        
+                        MenuItem(
+                            icon: "book.fill",
+                            title: "Books",
+                            isSelected: false
+                        ) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                isPresented = false
+                            }
+                        }
+                        
+                        MenuItem(
+                            icon: "calendar",
+                            title: "Diary",
+                            isSelected: false
+                        ) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                isPresented = false
+                            }
+                        }
+                        
+                        MenuItem(
+                            icon: "book.closed.fill",
+                            title: "Reviews",
+                            isSelected: false
+                        ) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                isPresented = false
+                            }
+                        }
+                        
+                        MenuItem(
+                            icon: "list.bullet",
+                            title: "Lists",
+                            isSelected: false
+                        ) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                isPresented = false
+                            }
+                        }
+                        
+                        MenuItem(
+                            icon: "heart.fill",
+                            title: "Likes",
+                            isSelected: false
+                        ) {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                isPresented = false
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    
+                    Spacer()
+                    
+                    // Logout button
+                    Button(action: {
+                        coordinator.logout()
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            isPresented = false
+                        }
+                    }) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .font(.body)
+                            Text("Logout")
+                                .font(.body)
+                        }
+                        .foregroundColor(.error)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 16)
+                    }
+                    .padding(.bottom, 32)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(width: UIScreen.main.bounds.width * 0.5)
+                .background(Color.cardBackground)
+                .shadow(color: .black.opacity(0.2), radius: 10, x: 2, y: 0)
+                
+                Spacer()
+            }
+            .offset(x: isPresented ? 0 : -UIScreen.main.bounds.width * 0.5)
+        }
+        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isPresented)
+        .onChange(of: isPresented) { newValue in
+            print("SideNavView isPresented changed to: \(newValue)")
+        }
+        .task {
+            await profileService.fetchProfile()
+        }
+    }
+}
+
+struct FollowStatBubble: View {
+    let count: Int
+    let label: String
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            Text("\(count)")
+                .font(.bodyBold)
+                .foregroundColor(.primaryText)
+            
+            Text(label)
+                .font(.caption)
+                .foregroundColor(.secondaryText)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
+        .background(Color.shelfBackground)
+        .cornerRadius(12)
+    }
+}
+
+struct MenuItem: View {
+    let icon: String
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 16) {
+                Image(systemName: icon)
+                    .font(.body)
+                    .foregroundColor(isSelected ? .primaryButton : .primaryText)
+                    .frame(width: 24)
+                
+                Text(title)
+                    .font(.body)
+                    .foregroundColor(isSelected ? .primaryButton : .primaryText)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(isSelected ? Color.primaryButton.opacity(0.2) : Color.clear)
+            .cornerRadius(12)
+        }
+        .padding(.vertical, 4)
+    }
+}
+

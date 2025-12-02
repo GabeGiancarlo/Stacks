@@ -15,7 +15,7 @@ router.use(authenticateToken);
 const upload = multer({
   dest: 'uploads/',
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: (req, file, cb) => {
+  fileFilter: (_req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
@@ -31,7 +31,6 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
     const userBookRepository = AppDataSource.getRepository(UserBook);
-    const bookRepository = AppDataSource.getRepository(Book);
 
     const userBooks = await userBookRepository.find({
       where: { userId },

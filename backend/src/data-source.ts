@@ -16,7 +16,11 @@ export const AppDataSource = new DataSource({
   synchronize: false, // Use migrations instead
   logging: process.env.NODE_ENV === 'development',
   entities: [User, Book, UserBook, Review, Badge, UserBadge],
-  migrations: ['src/migrations/**/*.ts'],
-  subscribers: ['src/subscribers/**/*.ts'],
+  migrations: process.env.NODE_ENV === 'production' 
+    ? ['dist/migrations/**/*.js']
+    : ['src/migrations/**/*.ts'],
+  subscribers: process.env.NODE_ENV === 'production'
+    ? ['dist/subscribers/**/*.js']
+    : ['src/subscribers/**/*.ts'],
 });
 

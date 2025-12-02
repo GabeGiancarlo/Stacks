@@ -165,7 +165,7 @@ router.post('/refresh', async (req: Request<{}, {}, RefreshRequest>, res: Respon
 });
 
 // POST /api/auth/logout
-router.post('/logout', async (req: Request, res: Response) => {
+router.post('/logout', async (_req: Request, res: Response) => {
   // For JWT, logout is handled client-side by removing tokens
   // In a production app, you might want to maintain a blacklist of tokens
   res.json({ message: 'Logged out successfully' });

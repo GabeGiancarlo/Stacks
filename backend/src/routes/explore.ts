@@ -7,7 +7,7 @@ const router = Router();
 router.use(authenticateToken);
 
 // GET /api/explore/recommendations - Get sample/recommended books
-router.get('/recommendations', async (req: AuthRequest, res: Response) => {
+router.get('/recommendations', async (_req: AuthRequest, res: Response) => {
   try {
     const bookRepository = AppDataSource.getRepository(Book);
 

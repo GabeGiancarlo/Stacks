@@ -27,7 +27,7 @@ services:
       dockerfile: Dockerfile
     container_name: stacks_backend
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       SERVER_PORT: 8080
       DB_HOST: mysql
       DB_PORT: 3306

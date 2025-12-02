@@ -25,12 +25,13 @@ async function seed() {
 
     // Clear existing data (optional - comment out if you want to preserve data)
     console.log('Clearing existing data...');
-    await userBadgeRepository.delete({});
-    await reviewRepository.delete({});
-    await userBookRepository.delete({});
-    await badgeRepository.delete({});
-    await bookRepository.delete({});
-    await userRepository.delete({});
+    // Use query builder to delete all records safely
+    await userBadgeRepository.createQueryBuilder().delete().execute();
+    await reviewRepository.createQueryBuilder().delete().execute();
+    await userBookRepository.createQueryBuilder().delete().execute();
+    await badgeRepository.createQueryBuilder().delete().execute();
+    await bookRepository.createQueryBuilder().delete().execute();
+    await userRepository.createQueryBuilder().delete().execute();
 
     // Create test users
     console.log('Creating test users...');
