@@ -51,6 +51,7 @@ struct MainTabView: View {
                     )
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                .ignoresSafeArea(edges: .bottom)
             }
             
             // Side navigation overlay - pure overlay, doesn't affect main content layout
