@@ -10,38 +10,36 @@ struct ExploreView: View {
     ]
     
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Dark navy background - fills entire screen
-                Color.shelfBackgroundDark
-                    .ignoresSafeArea(.all)
-                
-                if viewModel.isLoading {
-                    ProgressView()
-                        .tint(.goldAccent)
-                } else {
-                    ScrollView {
-                        LazyVGrid(columns: columns, spacing: 16) {
-                            ForEach(viewModel.recommendations) { book in
-                                BookCell(book: book) {
-                                    // Navigate to book detail
-                                }
+        ZStack {
+            // Dark navy background - fills entire screen
+            Color.shelfBackgroundDark
+                .ignoresSafeArea(.all)
+            
+            if viewModel.isLoading {
+                ProgressView()
+                    .tint(.goldAccent)
+            } else {
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: 16) {
+                        ForEach(viewModel.recommendations) { book in
+                            BookCell(book: book) {
+                                // Navigate to book detail
                             }
                         }
-                        .padding()
                     }
+                    .padding()
                 }
-            }
-            .frame(width: geometry.size.width, height: geometry.size.height)
-            .ignoresSafeArea(.all)
-            .task {
-                await viewModel.fetchRecommendations()
-            }
-            .refreshable {
-                await viewModel.fetchRecommendations()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea(.all)
+        .task {
+            await viewModel.fetchRecommendations()
+        }
+        .refreshable {
+            await viewModel.fetchRecommendations()
+        }
     }
 }
 

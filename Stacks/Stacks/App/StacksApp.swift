@@ -6,8 +6,15 @@ struct StacksApp: App {
     
     var body: some Scene {
         WindowGroup {
-            coordinator.rootView
-                .environmentObject(coordinator)
+            ZStack {
+                // Full-screen background - ensures no black bars
+                Color.shelfBackgroundDark
+                    .ignoresSafeArea(.all)
+                
+                // Root view content
+                coordinator.rootView
+                    .environmentObject(coordinator)
+            }
         }
     }
 }

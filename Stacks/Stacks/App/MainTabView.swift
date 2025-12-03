@@ -7,9 +7,14 @@ struct MainTabView: View {
     @State private var showScanner = false
     
     var body: some View {
-        GeometryReader { geometry in
+        ZStack {
+            // Background layer - fills entire screen including safe areas
+            Color.shelfBackgroundDark
+                .ignoresSafeArea(.all)
+            
+            // Main content layer - respects safe areas for content
             ZStack {
-                // Main content view based on selected tab - fills entire screen
+                // Main content view based on selected tab
                 Group {
                     switch selectedTab {
                     case 0:
@@ -32,10 +37,9 @@ struct MainTabView: View {
                         )
                     }
                 }
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .ignoresSafeArea(.all)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
-                // Custom bottom navigation bar - positioned at bottom
+                // Custom bottom navigation bar - positioned at absolute bottom
                 VStack {
                     Spacer()
                     BottomNavBar(
@@ -46,16 +50,17 @@ struct MainTabView: View {
                         }
                     )
                 }
-                .ignoresSafeArea(edges: .bottom)
-                
-                // Side navigation overlay
-                if isSideNavPresented {
-                    SideNavView(
-                        isPresented: $isSideNavPresented,
-                        coordinator: coordinator
-                    )
-                    .zIndex(1000)
-                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            }
+            
+            // Side navigation overlay - pure overlay, doesn't affect main content layout
+            if isSideNavPresented {
+                SideNavView(
+                    isPresented: $isSideNavPresented,
+                    coordinator: coordinator
+                )
+                .transition(.move(edge: .leading))
+                .zIndex(1000)
             }
         }
         .ignoresSafeArea(.all)

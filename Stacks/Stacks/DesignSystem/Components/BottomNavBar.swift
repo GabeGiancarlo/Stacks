@@ -53,8 +53,11 @@ struct BottomNavBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.top, 12)
-        .padding(.bottom, 34) // Extra padding for safe area
-        .background(Color.navBackground)
+        .padding(.bottom, 34) // Safe area padding - MainTabView handles ignoresSafeArea
+        .background(
+            Color.navBackground
+                .ignoresSafeArea(edges: .bottom)
+        )
         .overlay(
             Rectangle()
                 .frame(height: 1)
