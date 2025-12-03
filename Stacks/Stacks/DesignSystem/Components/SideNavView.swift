@@ -28,16 +28,16 @@ struct SideNavView: View {
                             // Display name (using username for now, can be updated when displayName is available)
                             Text(profile.username)
                                 .font(.title1)
-                                .foregroundColor(.primaryButton)
+                                .foregroundColor(.white)
                             
                             // Username with @ prefix
                             Text("@\(profile.username)")
                                 .font(.body)
-                                .foregroundColor(.secondaryText)
+                                .foregroundColor(.white.opacity(0.8))
                         } else {
                             Text("Loading...")
                                 .font(.title1)
-                                .foregroundColor(.primaryButton)
+                                .foregroundColor(.white)
                         }
                         
                         // Followers and Following bubbles
@@ -136,9 +136,19 @@ struct SideNavView: View {
                     }
                     .padding(.bottom, 32)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                 .frame(width: UIScreen.main.bounds.width * 0.5)
-                .background(Color.cardBackground)
+                .background(
+                    // Purple gradient background
+                    LinearGradient(
+                        colors: [
+                            Color.primaryButton.opacity(0.95),
+                            Color.primaryButton.opacity(0.85)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
                 .shadow(color: .black.opacity(0.2), radius: 10, x: 2, y: 0)
                 
                 Spacer()
@@ -163,15 +173,15 @@ struct FollowStatBubble: View {
         VStack(spacing: 4) {
             Text("\(count)")
                 .font(.bodyBold)
-                .foregroundColor(.primaryText)
+                .foregroundColor(.white)
             
             Text(label)
                 .font(.caption)
-                .foregroundColor(.secondaryText)
+                .foregroundColor(.white.opacity(0.8))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)
-        .background(Color.shelfBackground)
+        .background(Color.white.opacity(0.2))
         .cornerRadius(12)
     }
 }
@@ -187,17 +197,17 @@ struct MenuItem: View {
             HStack(spacing: 16) {
                 Image(systemName: icon)
                     .font(.body)
-                    .foregroundColor(isSelected ? .primaryButton : .primaryText)
+                    .foregroundColor(isSelected ? .white : .white.opacity(0.8))
                     .frame(width: 24)
                 
                 Text(title)
                     .font(.body)
-                    .foregroundColor(isSelected ? .primaryButton : .primaryText)
+                    .foregroundColor(isSelected ? .white : .white.opacity(0.8))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
             .padding(.vertical, 14)
-            .background(isSelected ? Color.primaryButton.opacity(0.2) : Color.clear)
+            .background(isSelected ? Color.white.opacity(0.3) : Color.clear)
             .cornerRadius(12)
         }
         .padding(.vertical, 4)

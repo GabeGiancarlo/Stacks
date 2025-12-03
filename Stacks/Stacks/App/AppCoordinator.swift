@@ -9,7 +9,6 @@ enum AppState {
 
 class AppCoordinator: ObservableObject {
     @Published var state: AppState = .onboarding
-    @Published var navigationPath = NavigationPath()
     
     private let authService: AuthService
     private var cancellables = Set<AnyCancellable>()

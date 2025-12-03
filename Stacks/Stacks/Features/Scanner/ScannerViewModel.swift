@@ -52,7 +52,7 @@ class ScannerViewModel: NSObject, ObservableObject {
                 captureSession.addOutput(metadataOutput)
                 
                 metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-                metadataOutput.metadataObjectTypes = [.ean13, .ean8, .isbn13]
+                metadataOutput.metadataObjectTypes = [.ean13, .ean8, .code128]
             } else {
                 return
             }

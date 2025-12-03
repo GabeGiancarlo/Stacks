@@ -3,7 +3,6 @@ import SwiftUI
 struct ExploreView: View {
     @StateObject private var viewModel = ExploreViewModel()
     let coordinator: AppCoordinator
-    @Binding var isSideNavPresented: Bool
     
     let columns = [
         GridItem(.flexible(), spacing: 16),
@@ -11,12 +10,15 @@ struct ExploreView: View {
     ]
     
     var body: some View {
-        NavigationView {
-            ZStack(alignment: .topLeading) {
-                Color.shelfBackground.ignoresSafeArea()
+        GeometryReader { geometry in
+            ZStack {
+                // Dark navy background - fills entire screen
+                Color.shelfBackgroundDark
+                    .ignoresSafeArea(.all)
                 
                 if viewModel.isLoading {
                     ProgressView()
+                        .tint(.goldAccent)
                 } else {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 16) {
@@ -29,34 +31,9 @@ struct ExploreView: View {
                         .padding()
                     }
                 }
-                
             }
-            .navigationTitle("Explore")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .overlay(alignment: .topLeading) {
-                // Custom hamburger button - positioned absolutely to avoid default menu
-                VStack {
-                    HStack {
-                        Image(systemName: "line.3.horizontal")
-                            .foregroundColor(.primaryText)
-                            .font(.system(size: 20, weight: .medium))
-                            .frame(width: 44, height: 44)
-                            .contentShape(Rectangle())
-                            .highPriorityGesture(
-                                TapGesture().onEnded {
-                                    print("Hamburger TAPPED via high priority gesture!")
-                                    isSideNavPresented = true
-                                }
-                            )
-                        Spacer()
-                    }
-                    .padding(.leading, 16)
-                    Spacer()
-                }
-                .padding(.top, 8)
-                .zIndex(999)
-            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .ignoresSafeArea(.all)
             .task {
                 await viewModel.fetchRecommendations()
             }
@@ -64,6 +41,7 @@ struct ExploreView: View {
                 await viewModel.fetchRecommendations()
             }
         }
+        .ignoresSafeArea(.all)
     }
 }
 

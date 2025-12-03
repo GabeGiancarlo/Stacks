@@ -20,8 +20,20 @@ struct ManualBookEntryView: View {
                     TextField("Author *", text: $author)
                     TextField("ISBN", text: $isbn)
                         .keyboardType(.numberPad)
-                    TextField("Description", text: $description, axis: .vertical)
-                        .lineLimit(3...6)
+                    TextEditor(text: $description)
+                        .frame(minHeight: 80)
+                        .overlay(
+                            Group {
+                                if description.isEmpty {
+                                    Text("Description")
+                                        .foregroundColor(.secondary)
+                                        .padding(.horizontal, 4)
+                                        .padding(.vertical, 8)
+                                        .allowsHitTesting(false)
+                                }
+                            },
+                            alignment: .topLeading
+                        )
                     TextField("Published Year", text: $publishedYear)
                         .keyboardType(.numberPad)
                 }
@@ -35,22 +47,24 @@ struct ManualBookEntryView: View {
             }
             .navigationTitle("Add Book")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
-                        Task {
-                            await saveBook()
-                        }
-                    }
-                    .disabled(title.isEmpty || author.isEmpty || isLoading)
+            .toolbar(content: toolbarContent)
+        }
+    }
+    
+    @ToolbarContentBuilder
+    private func toolbarContent() -> some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button("Cancel") {
+                dismiss()
+            }
+        }
+        ToolbarItem(placement: .confirmationAction) {
+            Button("Save") {
+                Task {
+                    await saveBook()
                 }
             }
+            .disabled(title.isEmpty || author.isEmpty || isLoading)
         }
     }
     

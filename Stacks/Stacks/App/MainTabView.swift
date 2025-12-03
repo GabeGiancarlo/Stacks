@@ -4,37 +4,63 @@ struct MainTabView: View {
     let coordinator: AppCoordinator
     @State private var selectedTab = 0
     @State private var isSideNavPresented = false
+    @State private var showScanner = false
     
     var body: some View {
-        ZStack {
-            TabView(selection: $selectedTab) {
-                BookshelfView(coordinator: coordinator, isSideNavPresented: $isSideNavPresented)
-                    .tabItem {
-                        Label("Library", systemImage: "books.vertical")
+        GeometryReader { geometry in
+            ZStack {
+                // Main content view based on selected tab - fills entire screen
+                Group {
+                    switch selectedTab {
+                    case 0:
+                        HomeView(
+                            coordinator: coordinator,
+                            isSideNavPresented: $isSideNavPresented,
+                            selectedTab: $selectedTab
+                        )
+                    case 1:
+                        ExploreView(coordinator: coordinator)
+                    case 2:
+                        NotificationsView(coordinator: coordinator)
+                    case 3:
+                        ProfileView(coordinator: coordinator)
+                    default:
+                        HomeView(
+                            coordinator: coordinator,
+                            isSideNavPresented: $isSideNavPresented,
+                            selectedTab: $selectedTab
+                        )
                     }
-                    .tag(0)
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .ignoresSafeArea(.all)
                 
-                ExploreView(coordinator: coordinator, isSideNavPresented: $isSideNavPresented)
-                    .tabItem {
-                        Label("Explore", systemImage: "magnifyingglass")
-                    }
-                    .tag(1)
+                // Custom bottom navigation bar - positioned at bottom
+                VStack {
+                    Spacer()
+                    BottomNavBar(
+                        selectedTab: $selectedTab,
+                        coordinator: coordinator,
+                        onAddBook: {
+                            showScanner = true
+                        }
+                    )
+                }
+                .ignoresSafeArea(edges: .bottom)
                 
-                ProfileView(coordinator: coordinator)
-                    .tabItem {
-                        Label("Profile", systemImage: "person.circle")
-                    }
-                    .tag(2)
+                // Side navigation overlay
+                if isSideNavPresented {
+                    SideNavView(
+                        isPresented: $isSideNavPresented,
+                        coordinator: coordinator
+                    )
+                    .zIndex(1000)
+                }
             }
-            .blur(radius: isSideNavPresented ? 4 : 0)
-            .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isSideNavPresented)
-            
-            // Side navigation overlay - must be on top
-            SideNavView(isPresented: $isSideNavPresented, coordinator: coordinator)
-                .zIndex(1000)
         }
-        .onChange(of: isSideNavPresented) { newValue in
-            print("SideNav state changed: \(newValue)")
+        .ignoresSafeArea(.all)
+        .sheet(isPresented: $showScanner) {
+            ScannerView()
         }
     }
 }

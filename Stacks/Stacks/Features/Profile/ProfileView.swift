@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct ProfileView: View {
     @StateObject private var profileService = ProfileService.shared
@@ -6,86 +7,102 @@ struct ProfileView: View {
     let coordinator: AppCoordinator
     
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Profile header
-                    VStack(spacing: 8) {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 80))
-                            .foregroundColor(.primaryButton)
-                        
-                        if let profile = profileService.profile {
-                            Text(profile.username)
-                                .font(.title1)
-                                .foregroundColor(.primaryText)
+        GeometryReader { geometry in
+            ZStack {
+                // Dark navy background - fills entire screen
+                Color.shelfBackgroundDark
+                    .ignoresSafeArea(.all)
+                
+                ScrollView {
+                    VStack(spacing: 24) {
+                        // Profile header
+                        VStack(spacing: 8) {
+                            // Use profile picture asset if available
+                            if UIImage(named: "Gabe-PFP 2") != nil {
+                                Image("Gabe-PFP 2")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 80, height: 80)
+                                    .clipShape(Circle())
+                            } else {
+                                Image(systemName: "person.circle.fill")
+                                    .font(.system(size: 80))
+                                    .foregroundColor(.goldAccent)
+                            }
                             
-                            Text(profile.email)
-                                .font(.body)
-                                .foregroundColor(.secondaryText)
-                        }
-                    }
-                    .padding()
-                    
-                    // Stats
-                    if let profile = profileService.profile {
-                        VStack(spacing: 16) {
-                            StatCard(title: "Books", value: "\(profile.stats.totalBooks)")
-                            StatCard(title: "Books Read", value: "\(profile.stats.booksRead)")
-                            StatCard(title: "Reviews", value: "\(profile.stats.reviewsWritten)")
-                            StatCard(title: "Reading Streak", value: "\(profile.stats.readingStreak) days")
-                        }
-                        .padding(.horizontal)
-                    }
-                    
-                    // Badges
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Badges")
-                            .font(.title2)
-                            .foregroundColor(.primaryText)
-                            .padding(.horizontal)
-                        
-                        if profileService.badges.isEmpty {
-                            Text("No badges earned yet")
-                                .font(.body)
-                                .foregroundColor(.secondaryText)
-                                .padding(.horizontal)
-                        } else {
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 16) {
-                                    ForEach(profileService.badges) { badge in
-                                        BadgeView(badge: badge)
-                                    }
-                                }
-                                .padding(.horizontal)
+                            if let profile = profileService.profile {
+                                Text(profile.username)
+                                    .font(.title1)
+                                    .foregroundColor(.whiteText)
+                                
+                                Text(profile.email)
+                                    .font(.body)
+                                    .foregroundColor(.whiteText.opacity(0.8))
                             }
                         }
+                        .padding()
+                        
+                        // Stats
+                        if let profile = profileService.profile {
+                            VStack(spacing: 16) {
+                                StatCard(title: "Books", value: "\(profile.stats.totalBooks)")
+                                StatCard(title: "Books Read", value: "\(profile.stats.booksRead)")
+                                StatCard(title: "Reviews", value: "\(profile.stats.reviewsWritten)")
+                                StatCard(title: "Reading Streak", value: "\(profile.stats.readingStreak) days")
+                            }
+                            .padding(.horizontal)
+                        }
+                        
+                        // Badges
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Badges")
+                                .font(.title2)
+                                .foregroundColor(.whiteText)
+                                .padding(.horizontal)
+                            
+                            if profileService.badges.isEmpty {
+                                Text("No badges earned yet")
+                                    .font(.body)
+                                    .foregroundColor(.whiteText.opacity(0.8))
+                                    .padding(.horizontal)
+                            } else {
+                                ScrollView(.horizontal, showsIndicators: false) {
+                                    HStack(spacing: 16) {
+                                        ForEach(profileService.badges) { badge in
+                                            BadgeView(badge: badge)
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                }
+                            }
+                        }
+                        .padding(.vertical)
+                        
+                        // Logout button
+                        Button(action: {
+                            coordinator.logout()
+                        }) {
+                            Text("Logout")
+                                .font(.bodyBold)
+                                .foregroundColor(.error)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.cardBackground)
+                                .cornerRadius(12)
+                        }
+                        .padding(.horizontal)
+                        .padding(.bottom)
                     }
-                    .padding(.vertical)
-                    
-                    // Logout button
-                    Button(action: {
-                        coordinator.logout()
-                    }) {
-                        Text("Logout")
-                            .font(.bodyBold)
-                            .foregroundColor(.error)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.cardBackground)
-                            .cornerRadius(12)
-                    }
-                    .padding(.horizontal)
-                    .padding(.bottom)
                 }
             }
-            .navigationTitle("Profile")
-            .navigationBarTitleDisplayMode(.large)
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .ignoresSafeArea(.all)
             .task {
                 await profileService.fetchProfile()
                 await profileService.fetchBadges()
             }
         }
+        .ignoresSafeArea(.all)
     }
 }
 
@@ -97,11 +114,11 @@ struct StatCard: View {
         VStack(spacing: 8) {
             Text(value)
                 .font(.title1)
-                .foregroundColor(.primaryText)
+                .foregroundColor(.whiteText)
             
             Text(title)
                 .font(.caption)
-                .foregroundColor(.secondaryText)
+                .foregroundColor(.whiteText.opacity(0.8))
         }
         .frame(maxWidth: .infinity)
         .padding()

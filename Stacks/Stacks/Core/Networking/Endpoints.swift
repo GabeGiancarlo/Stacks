@@ -28,26 +28,26 @@ struct Endpoint {
 
 extension Endpoint {
     static func signup(email: String, password: String, username: String) -> Endpoint {
-        let body = try? JSONEncoder().encode([
-            "email": email,
-            "password": password,
-            "username": username
-        ])
+        var bodyDict: [String: Any] = [:]
+        bodyDict["email"] = email
+        bodyDict["password"] = password
+        bodyDict["username"] = username
+        let body = try? JSONSerialization.data(withJSONObject: bodyDict)
         return Endpoint(path: "/api/auth/signup", method: .post, body: body)
     }
     
     static func login(email: String, password: String) -> Endpoint {
-        let body = try? JSONEncoder().encode([
-            "email": email,
-            "password": password
-        ])
+        var bodyDict: [String: Any] = [:]
+        bodyDict["email"] = email
+        bodyDict["password"] = password
+        let body = try? JSONSerialization.data(withJSONObject: bodyDict)
         return Endpoint(path: "/api/auth/login", method: .post, body: body)
     }
     
     static func refreshToken(refreshToken: String) -> Endpoint {
-        let body = try? JSONEncoder().encode([
-            "refreshToken": refreshToken
-        ])
+        var bodyDict: [String: Any] = [:]
+        bodyDict["refreshToken"] = refreshToken
+        let body = try? JSONSerialization.data(withJSONObject: bodyDict)
         return Endpoint(path: "/api/auth/refresh", method: .post, body: body)
     }
     
@@ -77,10 +77,10 @@ extension Endpoint {
     }
     
     static func createReview(bookId: Int, rating: Int, reviewText: String?) -> Endpoint {
-        let body = try? JSONEncoder().encode([
-            "rating": rating,
-            "reviewText": reviewText ?? ""
-        ])
+        var bodyDict: [String: Any] = [:]
+        bodyDict["rating"] = rating
+        bodyDict["reviewText"] = reviewText ?? ""
+        let body = try? JSONSerialization.data(withJSONObject: bodyDict)
         return Endpoint(path: "/api/books/\(bookId)/reviews", method: .post, body: body)
     }
     
